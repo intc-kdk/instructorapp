@@ -1,0 +1,165 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppBasic">
+        <item name="android:background">@color/colorBackGround</item>
+    </style>
+    <style name="EndActivity">
+        <item name="android:background">@android:color/black</item>
+    </style>
+    <style name="SystemTitle">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:layout_marginTop">47dp</item>
+    </style>
+
+    <!--S-01 設置状況確認画面-->
+    <style name="S01Title">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="S01Button">
+        <item name="android:width">250dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="S01YellowButton">
+        <item name="android:width">150dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:background">@color/colorYellowButton</item>
+    </style>
+    <style name="S01TableTablet">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="S01TableColumnTablet">
+        <item name="android:background">@android:color/darker_gray</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
+    <style name="S01TitleProcedure">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">50dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="S01TableProcedure">
+        <item name="android:background">@android:color/black</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="S01TableColumnProcedure">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
+
+    <!--S-02 トップページ-->
+    <style name="S02Button">
+        <item name="android:width">250dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="S02YellowButton">
+        <item name="android:width">250dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:background">@color/colorYellowButton</item>
+    </style>
+    <style name="S02Text">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!--S-03 確認画面-->
+    <style name="S03Text">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:layout_gravity">center_horizontal|center_vertical</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:paddingTop">250dp</item>
+        <item name="android:paddingBottom">50dp</item>
+    </style>
+    <style name="S03YellowButton">
+        <item name="android:width">250dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">center_horizontal|center_vertical</item>
+        <item name="android:textSize">40dp</item>
+        <item name="android:background">@color/colorYellowButton</item>
+    </style>
+    <style name="ProcedureRowLabel">
+        <item name="android:width">@dimen/procedureRowLabelWidth</item>
+        <item name="android:height">@dimen/procedureRowLabelHeight</item>
+    </style>
+
+    <!--S-04 手順書画面-->
+    <style name="S04TextSelectRow">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:height">100dp</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="S04ProcedureLayout">
+        <item name="android:height">100dp</item>
+    </style>
+    <style name="S04ButtonSiteDifference">
+        <item name="android:width">100dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@color/colorYellowButton</item>
+    </style>
+    <style name="S04Footer">
+        <item name="android:background">@android:color/white</item>
+    </style>
+    <style name="S04TextSiteDifference">
+        <item name="android:width">400dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:textColor">@android:color/holo_red_light</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="S04ButtonBackMenu">
+        <item name="android:height">100dp</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!--S-05 現場差異画面(ポップアップ)-->
+    <style name="S05Button">
+        <item name="android:width">400dp</item>
+        <item name="android:height">80dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:background">@color/colorYellowButton</item>
+    </style>
+
+    <!--S-06 終了方法選択画面-->
+    <style name="S06Button">
+        <item name="android:width">400dp</item>
+        <item name="android:height">250dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginTop">94dp</item>
+    </style>
+    <style name="S06ButtonReturn">
+        <item name="android:height">80dp</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:layout_marginTop">47dp</item>
+    </style>
+
+</resources>

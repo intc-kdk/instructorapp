@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/AppBasic"
+    android:layout_centerVertical="false"
+    android:layout_centerHorizontal="false">
+
+    <TextView
+        android:text="@string/S_03_confirm_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView11"
+        style="@style/S03Text" />
+
+    <Button
+        android:text="@string/S_03_OK_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/S03YellowButton"
+        android:id="@+id/ok_button" />
+</LinearLayout>

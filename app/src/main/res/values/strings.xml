@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">MethodVerification</string>
+
+    <string name="S_title">指示者タブレット</string>
+    <string name="S_title_system">停復電作業支援システム</string>
+
+    <string name="S_01_title">タブレット設置状況</string>
+    <string name="S_01_menu">MENU</string>
+    <string name="S_01_update">更新</string>
+    <string name="S_01_table_tablet_column1">タブレット名称\n（場所・盤名称の文字コード順に表示）</string>
+    <string name="S_01_table_tablet_column2">"○：設置済\n"</string>
+    <string name="S_01_text_procedure">手順一覧</string>
+    <string name="S_01_table_procedure_column1">No</string>
+    <string name="S_01_table_procedure_column2">場所</string>
+    <string name="S_01_table_procedure_column3">盤</string>
+    <string name="S_01_table_procedure_column4">機器</string>
+    <string name="S_01_table_procedure_column5">指示</string>
+    <string name="S_01_table_procedure_column6">備考</string>
+    <string name="S_01_table_procedure_column7">時刻</string>
+    <string name="S_01_table_procedure_column8">差異</string>
+    <string name="S_01_start">開　始</string>
+    <string name="S_02_title">停復電作業支援システム</string>
+    <string name="S_02_start_button">開　始</string>
+    <string name="S_02_start_text">setup作成用.xlsm</string>
+    <string name="S_02_end_button">終　了</string>
+    <string name="S_02_end_text">安全に終了します</string>
+    <string name="S_02_procedure_button">手順確認</string>
+    <string name="S_02_procedure_text">・手順の確認\n・タブレットの設置確認</string>
+    <string name="S_03_confirm_text">！盤の扉を開ける前！にもう一度、\n「盤名」と「盤タブレット名」が\n一致していることを確認してください。</string>
+    <string name="S_03_OK_button">OK</string>
+    <string name="S_04_site_diff">現場\n差異</string>
+    <string name="S_04_return">MENU\nへ戻る</string>
+    <string name="S_05_cancel_button">キャンセル</string>
+    <string name="S_05_site_difference_text">現場差異の種類を選んでください</string>
+    <string name="S_06_not_all_end_button">指示者確認者のタブレットを終了</string>
+    <string name="S_06_all_end_button">全てののタブレットを終了</string>
+    <string name="S_06_return_button">メニューへ戻る</string>
+</resources>

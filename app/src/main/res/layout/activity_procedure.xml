@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app= "http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    tools:context="com.example.masterkdk.methodverification.ProcedureActivity"
+    style="@style/AppBasic">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/no_text"
+            android:layout_weight="1"
+            style="@style/S04TextSelectRow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/board_equipment_text"
+            android:layout_weight="1"
+            style="@style/S04TextSelectRow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/instruct_text"
+            android:layout_weight="1"
+            style="@style/S04TextSelectRow" />
+
+    </LinearLayout>
+
+    <Button
+        android:text="@string/S_04_site_diff"
+        android:id="@+id/site_difference_button"
+        style="@style/S04ButtonSiteDifference"
+        android:layout_weight="0.02"
+        android:elevation="0dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ScrollView"
+        android:layout_weight="0.96">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/procedure"
+            style="S04ProcedureLayout">
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/S04Footer">
+
+        <Button
+            android:text="@string/S_04_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/return_button"
+            style="@style/S04ButtonBackMenu"
+            android:layout_weight="0.13" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/site_diff_text"
+            android:layout_weight="1"
+            style="@style/S04TextSiteDifference" />
+    </LinearLayout>
+
+</LinearLayout>

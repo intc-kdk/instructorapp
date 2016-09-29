@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/EndActivity">
+
+    <TextView
+        android:text="@string/S_title_system"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        style="@style/SystemTitle" />
+
+    <Button
+        android:text="@string/S_06_not_all_end_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        style="@style/S06Button" />
+
+    <Button
+        android:text="@string/S_06_all_end_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button2"
+        style="@style/S06Button" />
+
+    <Button
+        android:text="@string/S_06_return_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/return_button"
+        style="@style/S06ButtonReturn" />
+</LinearLayout>
