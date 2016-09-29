@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MethodVerification</string>
 
-    <string name="S_title">指示者タブレット</string>
+    <string name="S_title">指示者タブレット </string>
     <string name="S_title_system">停復電作業支援システム</string>
 
     <string name="S_01_title">タブレット設置状況</string>
