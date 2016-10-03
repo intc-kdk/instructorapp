@@ -5,7 +5,7 @@
     <string name="S_title_system">停復電作業支援システム</string>
 
     <string name="S_01_title">タブレット設置状況</string>
-    <string name="S_01_menu">MENU </string>
+    <string name="S_01_menu">MENU</string>
     <string name="S_01_update">更新</string>
     <string name="S_01_table_tablet_column1">タブレット名称\n（場所・盤名称の文字コード順に表示）</string>
     <string name="S_01_table_tablet_column2">"○：設置済\n"</string>

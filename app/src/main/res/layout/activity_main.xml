@@ -32,20 +32,9 @@
         android:layout_alignParentStart="true"
         style="@style/S01YellowButton" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/S_01_update"
-        android:id="@+id/update_button"
-        android:onClick="onClickStartButton"
-        android:layout_alignBaseline="@+id/textView"
-        android:layout_alignBottom="@+id/textView"
-        android:layout_alignParentEnd="true"
-        style="@style/S01YellowButton" />
-
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="800dp"
         android:layout_below="@+id/menu_button"
         android:layout_alignParentStart="true"
         android:layout_marginTop="28dp">
@@ -169,8 +158,8 @@
         android:id="@+id/start_button"
         android:onClick="onClickStartButton"
         style="@style/S01Button"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="12dp"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/update_button" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        
+        <item name="testStyle">@style/S01TableColumnTablet</item>
+        <!--<item name="testStyle">@drawable/simple_frame</item>-->
     </style>
 
     <style name="AppBasic">

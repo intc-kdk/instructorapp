@@ -32,7 +32,8 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
         final TextView boardEquipmentText = (TextView) findViewById(R.id.board_equipment_text);
         final TextView instructText = (TextView) findViewById(R.id.instruct_text);
 
-        for (int i = 0; i < 1000; i++) {
+        // TODO:処理の繰り返し数は手順数
+        for (int i = 0; i < 1000; i++) {  // 試験的に1000件に設定
 
             final LinearLayout linearLayoutRow = new LinearLayout(this);
             linearLayoutRow.setOrientation(LinearLayout.HORIZONTAL);
