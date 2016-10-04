@@ -2,6 +2,7 @@ package com.example.masterkdk.methodverification;
 
 import android.content.Intent;
 //import android.graphics.Paint;
+import android.content.Loader;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,12 +18,84 @@ import android.widget.TextView;
 
 import android.view.ViewGroup;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener{
+import android.app.LoaderManager;
+import com.example.masterkdk.methodverification.loader.SendRequestLoader;
+
+import java.nio.charset.StandardCharsets;
+//import com.example.masterkdk.methodverification.net.TcpClient;
+
+
+//public class MainActivity extends AppCompatActivity implements OnClickListener{
+public class MainActivity extends AppCompatActivity implements OnClickListener, LoaderManager.LoaderCallbacks<String> {
+
+    /*
+     * サーバとの通信処理(作業の為、一時的に先頭に置く)
+     */
+
+    private TextView mTextView;
+    private static final String HOST = "192.168.10.20";  // 実環境
+//    private static final int PORT = 1280;  // 実環境
+    private static final int PORT = 1234; // v003の開発用サーバ
+//    private TcpClient client;
+//    private static final String DATA = "data";
+
+    public void startAsyncLoad(String data){
+//    public String startAsyncLoad(String data){
+        Bundle args = new Bundle();
+        args.putString("Data",data);
+        // Loaderを初期化する
+        getLoaderManager().initLoader(0, args, this);  // onCreateLoaderが呼ばれる
+//        SendRequestLoader lstr = (SendRequestLoader) getLoaderManager().initLoader(0, args, this);  // onCreateLoaderが呼ばれる
+//        String str = lstr.loadInBackground();
+//        return str;
+    }
+
+    @Override
+    public Loader<String> onCreateLoader(int id, Bundle args){
+
+        if(args != null) {
+            String data = args.getString("Data");
+            SendRequestLoader srl = new SendRequestLoader(this, HOST, PORT, data);
+            return  new SendRequestLoader(this, HOST, PORT, data);
+        } else {
+            return null;
+        }
+/*        if(args != null) {
+            String data = args.getString("Data");
+            return  new SendRequestLoader(this, HOST, PORT, data);
+        }
+        return null;*/
+    }
+
+    @Override
+    public void onLoadFinished(Loader<String> loader, String result) {
+        int id = loader.getId();
+        mTextView.setText(result);
+        getLoaderManager().destroyLoader(id);  // ローダーを破棄
+    }
+
+    @Override
+    public void onLoaderReset(Loader<String> loader) {
+        String st = "aaa";
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        // サーバへ指示者アプリの活性を通知
+        // コマンドはアスキー文字列で変換の必要あり
+        String str1 = "10@";
+        byte[] bytes = str1.getBytes(StandardCharsets.UTF_8);
+        String str = new String(bytes, StandardCharsets.US_ASCII);
+        startAsyncLoad(str);
+//        startAsyncLoad("10@");  // VB側で、受信ログ出せたけどエラーも出た
+//        String str = startAsyncLoad("10");  // TCPシミュレータには"10"送れた
+
 
         // ボタンへリスナを登録
         findViewById(R.id.menu_button).setOnClickListener(this);

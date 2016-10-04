@@ -2,16 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.masterkdk.methodverification">
 
+    <!--アプリ基本情報-->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/S_title"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!--利用するアクティビティ-->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -36,5 +37,8 @@
             </intent-filter>
         </activity>
     </application>
+
+    <!--インターネット接続のパーミッション-->
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 </manifest>
