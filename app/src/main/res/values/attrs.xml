@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <declare-styleable name="DynamicStyle">-->
-        <attr name="testStyle" format="integer|reference" />
-<!--    </declare-styleable>-->
+        <!--Javaで設定するスタイルは下記と styles.xml に実装する必要あり-->
+        <attr name="S01TabletTableColumnDynamic" format="integer|reference" />
+        <attr name="S01ProcedureTableColumnDynamic" format="integer|reference" />
+        <attr name="S01ProcedureTableCommentColumnDynamic" format="integer|reference" />
 </resources>

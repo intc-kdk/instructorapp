@@ -6,9 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        
-        <item name="testStyle">@style/S01TableColumnTablet</item>
-        <!--<item name="testStyle">@drawable/simple_frame</item>-->
+        <!--Javaで設定するスタイルは下記と attrs.xml に実装する必要あり-->
+        <item name="S01TabletTableColumnDynamic">@style/S01TableColumnTablet</item>
+        <item name="S01ProcedureTableColumnDynamic">@style/S01TableColumnProcedure</item>
+        <item name="S01ProcedureTableCommentColumnDynamic">@style/S01TableCommentColumnProcedure</item>
     </style>
 
     <style name="AppBasic">
@@ -50,6 +51,7 @@
         <item name="android:background">@android:color/darker_gray</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:gravity">center_horizontal</item>
+        <!--ここで設定したmarginはJavaを使って適用できない-->
         <item name="android:layout_margin">2dp</item>
     </style>
     <style name="S01TitleProcedure">
@@ -66,7 +68,13 @@
         <item name="android:background">@android:color/white</item>
         <item name="android:textColor">@android:color/black</item>
         <item name="android:gravity">center_horizontal</item>
+        <!--ここで設定したmarginはJavaを使って適用できない-->
         <item name="android:layout_margin">2dp</item>
+    </style>
+    <style name="S01TableCommentColumnProcedure">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:gravity">left</item>
     </style>
 
     <!--S-02 トップページ-->

@@ -8,13 +8,14 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 /**
- * Created by takashi on 2016/09/27.
+ * タブレット発呼のソケット通信を行うクラス
  */
 
 public class TcpClient {
     private String mSendData;
     private String mHost;
     private int mPort;
+    private Socket connection = null;
 
     public TcpClient(String host, int port, String data)
     {
@@ -24,10 +25,9 @@ public class TcpClient {
     }
 
     public String connect() {
-        Socket connection = null;
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        String message = "result:";
+        String message = "";
         try {
             //ソケット
             connection = new Socket(mHost, mPort);
@@ -38,12 +38,16 @@ public class TcpClient {
             writer.write(mSendData);
             writer.flush();
 
-            //HTTPレスポンス
-            String result;
-            while((result = reader.readLine()) != null) {
-                message += result;
-                message += "\n";
+            //レスポンス
+            int result;
+            StringBuilder builder = new StringBuilder();
+            while((result = reader.read()) != -1 ){
+                builder.append((char)result);
+                if(result == 36) {
+                    break;
+                }
             }
+            message=builder.toString();
 
         } catch (IOException e) {
             message = "IOException error: " + e.getMessage();
@@ -60,7 +64,13 @@ public class TcpClient {
                 e.printStackTrace();
             }
         }
-        System.out.println(message);
         return message;
+    }
+    public void disconnect() {
+        try{
+            connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
