@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.masterkdk.methodverification.net.EndOffActivity;
+
 /**
  * Created by masterkdk on 2016/09/26.
  * S-06 終了方法選択画面
@@ -19,6 +21,8 @@ public class EndActivity extends AppCompatActivity implements View.OnClickListen
 
         // ボタンへリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
+        findViewById(R.id.two_end_button).setOnClickListener(this);
+        findViewById(R.id.all_end_button).setOnClickListener(this);
     }
 
     // ボタンクリック時詳細処理
@@ -28,6 +32,18 @@ public class EndActivity extends AppCompatActivity implements View.OnClickListen
         Intent intent = null;
         if (id == R.id.return_button) {
             intent = new Intent(this, TopActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
+            startActivity(intent);
+        } else {
+            // TODO:ボタン別コマンド送信
+            intent = new Intent(this, EndOffActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
             startActivity(intent);
         }
     }

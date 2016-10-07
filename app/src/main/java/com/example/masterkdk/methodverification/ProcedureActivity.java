@@ -1,6 +1,8 @@
 package com.example.masterkdk.methodverification;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +13,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.view.Gravity.CENTER_HORIZONTAL;
 
@@ -27,15 +35,92 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
         findViewById(R.id.site_difference_button).setOnClickListener(this);
 
         // 手順の表示処理
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.procedure);
         final TextView noText = (TextView) findViewById(R.id.no_text);
         final TextView boardEquipmentText = (TextView) findViewById(R.id.board_equipment_text);
         final TextView instructText = (TextView) findViewById(R.id.instruct_text);
+//        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.procedure);
+        TableLayout procedureTable = (TableLayout) findViewById(R.id.procedureTable);
 
+        String innerText = null;
+
+   //     TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
+
+        TableRow.LayoutParams columnLayout = new TableRow.LayoutParams();  // 通常の行のレイアウトパラメータ
+        columnLayout.setMargins(8, 8, 8, 8);  // 動的なスタイル設定はstyles.xmlに書いたmarginを利用できない
+
+        // TODO:後で整えること
+
+        Intent pI = getIntent();
+        String resultSt = pI.getStringExtra("resultStTmp");
+//        Context apc = getApplicationContext();
+//        SharedPreferences sp = apc.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
+//        SharedPreferences sp = getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
+//        SharedPreferences sp = this.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
+//        String resultSt = sp.getString("tejun", "NoResult");
+
+        try {
+            JSONObject responseJson = new JSONObject(resultSt);
+            JSONArray procedureArray = responseJson.getJSONArray("tejun");
+
+          for (int i = 0; i < procedureArray.length(); i++) {
+
+            final TableRow procedureRow = new TableRow(this);
+
+            final TextView rowNoText = new TextView(this);
+            rowNoText.setText(Integer.toString(i + 1));
+            procedureRow.addView(rowNoText, columnLayout);
+
+              if (procedureArray.getJSONObject(i).getString("No").equals("C")) {
+                  // Noが"C"の場合はコメント行を追加
+//                  String innerText = procedureArray.getJSONObject(i).getString("コメント");
+                  TextView addColumn = new TextView(this, null, R.attr.S04CommentRowTextDynamic);
+                  innerText = procedureArray.getJSONObject(i).getString("コメント");
+                  addColumn.setText(innerText);
+                  procedureRow.addView(addColumn, columnLayout);
+              } else {
+
+                  final TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
+                  boardEquipmentRowText.setText(procedureArray.getJSONObject(i).getString("盤") + "\n" + procedureArray.getJSONObject(i).getString("機器"));
+                  procedureRow.addView(boardEquipmentRowText, columnLayout);
+
+                  final Button rowInstructButton = new Button(this, null, R.attr.S04InstructButtonDynamic);
+                  rowInstructButton.setText(procedureArray.getJSONObject(i).getString("指示") + "\n　");
+//            rowInstructButton.setText("自動・遠方");
+                  rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
+                          LinearLayout.LayoutParams.WRAP_CONTENT,
+                          LinearLayout.LayoutParams.WRAP_CONTENT));
+                  rowInstructButton.setOnClickListener(new View.OnClickListener() {
+                      @Override
+                      public void onClick(View v) {
+                          // 指示ボタンクリック時の詳細処理
+
+                          noText.setText(rowNoText.getText());
+                          boardEquipmentText.setText(boardEquipmentRowText.getText());
+                          instructText.setText(rowInstructButton.getText());
+
+                          Resources res = getResources();
+                          int lockColor = res.getColor(R.color.colorYellowButton);
+                          procedureRow.setBackgroundColor(lockColor);
+
+                          v.setEnabled(false);
+                      }
+                  });
+                  procedureRow.addView(rowInstructButton, columnLayout);
+
+              }
+
+            procedureTable.addView(procedureRow);
+        }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+/*
         // TODO:処理の繰り返し数は手順数
         for (int i = 0; i < 1000; i++) {  // 試験的に1000件に設定
 
-            final LinearLayout linearLayoutRow = new LinearLayout(this);
+//            final LinearLayout linearLayoutRow = new LinearLayout(this);
+            final LinearLayout linearLayoutRow = new LinearLayout(this,null,R.attr.S04ProcedureRowDynamic);
             linearLayoutRow.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.addView(linearLayoutRow);
 
@@ -43,12 +128,14 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
             rowNoText.setText(Integer.toString(i+1) + "　　　　　");
             linearLayoutRow.addView(rowNoText);
 
-            final TextView rowBoardEquipmentText = new TextView(this);
+//            final TextView rowBoardEquipmentText = new TextView(this);
+            final TextView rowBoardEquipmentText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
             rowBoardEquipmentText.setText("1系コンデンサ(1)～(3)盤\n#43RD-C14");
   //          textView2.setBackground(R.drawable.simple_frame);
             linearLayoutRow.addView(rowBoardEquipmentText);
 
-            final Button rowInstructButton = new Button(this);
+//            final Button rowInstructButton = new Button(this);
+            final Button rowInstructButton = new Button(this,null,R.attr.S04InstructButtonDynamic);
             rowInstructButton.setText("自動・遠方");
             rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -71,6 +158,7 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
             });
             linearLayoutRow.addView(rowInstructButton);
         }
+*/
     }
 
     // ボタンクリック時詳細処理
@@ -83,6 +171,10 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
             this.onClickSiteDiffButton(v);
         } else if (id == R.id.return_button) {  // MENUへ戻るボタン
             Intent intent = new Intent(this, TopActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
             startActivity(intent);
         }
     }

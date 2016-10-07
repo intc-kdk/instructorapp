@@ -33,6 +33,6 @@
     <string name="S_05_cancel_button">キャンセル</string>
     <string name="S_05_site_difference_text">現場差異の種類を選んでください</string>
     <string name="S_06_not_all_end_button">指示者確認者のタブレットを終了</string>
-    <string name="S_06_all_end_button">全てののタブレットを終了</string>
+    <string name="S_06_all_end_button">全てのタブレットを終了</string>
     <string name="S_06_return_button">メニューへ戻る</string>
 </resources>

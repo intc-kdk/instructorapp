@@ -36,6 +36,13 @@
                 <action android:name="android.intent.action.CONFIRM" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".net.EndOffActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.ENDOFF" />
+            </intent-filter>
+        </activity>
+
     </application>
 
     <!--インターネット接続のパーミッション-->

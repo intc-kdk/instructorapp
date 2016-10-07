@@ -28,6 +28,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         int id = v.getId();
         if (id == R.id.ok_button) {
             Intent intent = new Intent(this, ProcedureActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
             startActivity(intent);
         }
     }

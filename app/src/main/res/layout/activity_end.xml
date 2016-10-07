@@ -16,14 +16,14 @@
         android:text="@string/S_06_not_all_end_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button"
+        android:id="@+id/two_end_button"
         style="@style/S06Button" />
 
     <Button
         android:text="@string/S_06_all_end_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button2"
+        android:id="@+id/all_end_button"
         style="@style/S06Button" />
 
     <Button

@@ -32,12 +32,24 @@ public class TopActivity extends AppCompatActivity implements View.OnClickListen
 
         if (id == R.id.start_button) {
             intent = new Intent(this, ConfirmActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
             startActivity(intent);
         } else if (id == R.id.end_button) {
             intent = new Intent(this, EndActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
             startActivity(intent);
         } else if (id == R.id.confirm_button) {
             intent = new Intent(this, MainActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
             startActivity(intent);
         }
     }

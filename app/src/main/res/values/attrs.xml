@@ -4,4 +4,8 @@
         <attr name="S01TabletTableColumnDynamic" format="integer|reference" />
         <attr name="S01ProcedureTableColumnDynamic" format="integer|reference" />
         <attr name="S01ProcedureTableCommentColumnDynamic" format="integer|reference" />
+        <attr name="S04ProcedureRowDynamic" format="integer|reference" />
+        <attr name="S04BoardEquipmentTextDynamic" format="integer|reference" />
+        <attr name="S04InstructButtonDynamic" format="integer|reference" />
+        <attr name="S04CommentRowTextDynamic" format="integer|reference" />
 </resources>

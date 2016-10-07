@@ -1,23 +1,22 @@
 package com.example.masterkdk.methodverification;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-//import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-//import android.view.ViewGroup;
 import android.app.LoaderManager;
 import com.example.masterkdk.methodverification.loader.SendRequestLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
-//import java.sql.Wrapper;
 
 
 public class MainActivity extends AppCompatActivity implements OnClickListener, LoaderManager.LoaderCallbacks<String> {
@@ -72,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     addColumn = new TextView(this, null, R.attr.S01TabletTableColumnDynamic);
                     if (tabletTableItem[j].equals("状況")) {
                         innerText = (innerText.equals("False")) ? "" : "○";  // 状況の表示値を変換
+                        innerText = (innerText.equals("")) ? "" : "";  // 状況の表示値を変換
                     }
                     addColumn.setText(innerText);
                     addRow.addView(addColumn, columnLayout);
@@ -112,6 +112,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 }
                 tableProcedure.addView(addRow);
             }
+
+            // 手順書の保存
+            this.resultStTmp = resultArr[1];
+/*
+            Context apc = getApplicationContext();
+            SharedPreferences sp = apc.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
+            SharedPreferences sp = this.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
+            SharedPreferences sp = getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("tejyun", resultArr[1]);
+            editor.apply();
+*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -150,6 +162,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         findViewById(R.id.start_button).setOnClickListener(this);
     }
 
+    private String resultStTmp = null;
+
     // ボタンクリック時詳細処理
     @Override
     public void onClick(View v){
@@ -157,9 +171,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         Intent intent = null;
         if (id == R.id.menu_button) {
             intent = new Intent(this, TopActivity.class);
+
+            intent.putExtra("resultStTmp", resultStTmp);
+
             startActivity(intent);
         } else if (id == R.id.start_button) {
             intent = new Intent(this, ConfirmActivity.class);
+
+            intent.putExtra("resultStTmp", resultStTmp);
+
             startActivity(intent);
         }
     }

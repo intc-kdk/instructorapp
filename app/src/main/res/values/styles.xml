@@ -10,6 +10,10 @@
         <item name="S01TabletTableColumnDynamic">@style/S01TableColumnTablet</item>
         <item name="S01ProcedureTableColumnDynamic">@style/S01TableColumnProcedure</item>
         <item name="S01ProcedureTableCommentColumnDynamic">@style/S01TableCommentColumnProcedure</item>
+        <item name="S04ProcedureRowDynamic">@style/S04ProcedureRow</item>
+        <item name="S04BoardEquipmentTextDynamic">@style/S04BoardEquipmentText</item>
+        <item name="S04InstructButtonDynamic">@style/S04InstructButton</item>
+        <item name="S04CommentRowTextDynamic">@style/S04CommentRowText</item>
     </style>
 
     <style name="AppBasic">
@@ -124,8 +128,32 @@
         <item name="android:gravity">center_horizontal|center_vertical</item>
         <item name="android:textSize">30sp</item>
     </style>
-    <style name="S04ProcedureLayout">
+<!--    <style name="S04ProcedureLayout">
         <item name="android:height">100dp</item>
+    </style>-->
+    <style name="S04ProcedureRow">
+        <item name="android:height">100dp</item>
+        <item name="android:gravity">left|center_vertical</item>
+    </style>
+    <style name="S04BoardEquipmentText">
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:background">@color/colorBoardEquipmentText</item>
+        <item name="android:width">350dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="S04InstructButton">
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:background">@color/colorInstructButton</item>
+        <item name="android:width">175dp</item>
+        <item name="android:height">100dp</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="S04CommentRowText">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:height">100dp</item>
+        <item name="android:textSize">30sp</item>
     </style>
     <style name="S04ButtonSiteDifference">
         <item name="android:width">100dp</item>
@@ -171,6 +199,13 @@
         <item name="android:height">80dp</item>
         <item name="android:layout_gravity">left</item>
         <item name="android:layout_marginTop">47dp</item>
+    </style>
+
+    <!--S-07 終了画面-->
+    <style name="S07OffText">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
 </resources>
