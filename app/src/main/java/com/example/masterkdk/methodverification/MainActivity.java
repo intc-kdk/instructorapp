@@ -1,9 +1,7 @@
 package com.example.masterkdk.methodverification;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +14,7 @@ import com.example.masterkdk.methodverification.loader.SendRequestLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.nio.charset.StandardCharsets;
 
 
@@ -69,10 +68,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 for (int j = 0; j < columnNum; j++) {
                     innerText = tabletArray.getJSONObject(i).getString(tabletTableItem[j]);
                     addColumn = new TextView(this, null, R.attr.S01TabletTableColumnDynamic);
-                    if (tabletTableItem[j].equals("状況")) {
-                        innerText = (innerText.equals("False")) ? "" : "○";  // 状況の表示値を変換
-                        innerText = (innerText.equals("")) ? "" : "";  // 状況の表示値を変換
-                    }
                     addColumn.setText(innerText);
                     addRow.addView(addColumn, columnLayout);
                 }
@@ -81,14 +76,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
             // 手順一覧の表示
             JSONArray procedureArray = responseJson.getJSONArray("tejun");
+            // TODO: サーバでできないJSONソート対応
             TableLayout tableProcedure = (TableLayout) findViewById(R.id.table_procedure);
-            String[] procedureTableItem = {"No", "場所", "盤", "機器", "指示", "備考", "時刻", "差異"};  // 手順一覧の項目(コメント除く)
+            String[] procedureTableItem = {"tx_sno", "tx_basho", "tx_bname", "tx_swname", "tx_action", "tx_biko", "dotime", "tx_gs"};  // 手順一覧の項目(コメント除く)
             columnNum = procedureTableItem.length;  // 手順一覧の列数
             // コメント行のレイアウトパラメータ
             TableRow.LayoutParams commentColumnLayout = new TableRow.LayoutParams();
             commentColumnLayout.setMargins(2, 2, 2, 2);
             commentColumnLayout.span = columnNum;
+            StringBuilder stringBuilder = null;
+//            StringBuilder stringBuilder = new StringBuilder();
             String tableItem = null;
+            int newLineTargetNum = 0;
             // 行の追加
             for (int i = 0; i < procedureArray.length(); i++) {
                 addRow = new TableRow(this);
@@ -96,9 +95,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 for (int j = 0; j < columnNum; j++) {
                     tableItem = procedureTableItem[j];
                     innerText = procedureArray.getJSONObject(i).getString(tableItem);
-                    if (tableItem.equals("No") && innerText.equals("C")) {
+                    if (tableItem.equals("tx_sno") && innerText.equals("C")) {
                         // Noが"C"の場合はコメント行を追加
-                        innerText = procedureArray.getJSONObject(i).getString("コメント");
+                        innerText = procedureArray.getJSONObject(i).getString("tx_com");
                         addColumn = new TextView(this, null, R.attr.S01ProcedureTableCommentColumnDynamic);
                         addColumn.setText(innerText);
                         addRow.addView(addColumn, commentColumnLayout);
@@ -106,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     } else {
                         // 通常の行の追加
                         addColumn = new TextView(this, null, R.attr.S01ProcedureTableColumnDynamic);
+
+                        // テーブル幅の伸長を抑止する
+//                        innerText = innerText.replace("<br>", "\n");
                         addColumn.setText(innerText);
                         addRow.addView(addColumn, columnLayout);
                     }
@@ -115,15 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
             // 手順書の保存
             this.resultStTmp = resultArr[1];
-/*
-            Context apc = getApplicationContext();
-            SharedPreferences sp = apc.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
-            SharedPreferences sp = this.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
-            SharedPreferences sp = getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString("tejyun", resultArr[1]);
-            editor.apply();
-*/
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

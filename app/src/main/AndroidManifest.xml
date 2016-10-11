@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".net.EndOffActivity">
+        <activity android:name=".EndOffActivity">
             <intent-filter>
                 <action android:name="android.intent.action.ENDOFF" />
             </intent-filter>

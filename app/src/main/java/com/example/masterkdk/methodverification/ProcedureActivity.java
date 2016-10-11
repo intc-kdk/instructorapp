@@ -1,8 +1,6 @@
 package com.example.masterkdk.methodverification;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,8 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static android.view.Gravity.CENTER_HORIZONTAL;
-
 public class ProcedureActivity extends AppCompatActivity implements View.OnClickListener{
 
     @Override
@@ -38,127 +34,68 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
         final TextView noText = (TextView) findViewById(R.id.no_text);
         final TextView boardEquipmentText = (TextView) findViewById(R.id.board_equipment_text);
         final TextView instructText = (TextView) findViewById(R.id.instruct_text);
-//        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.procedure);
         TableLayout procedureTable = (TableLayout) findViewById(R.id.procedureTable);
-
         String innerText = null;
-
-   //     TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
-
         TableRow.LayoutParams columnLayout = new TableRow.LayoutParams();  // 通常の行のレイアウトパラメータ
         columnLayout.setMargins(8, 8, 8, 8);  // 動的なスタイル設定はstyles.xmlに書いたmarginを利用できない
 
-        // TODO:後で整えること
-
         Intent pI = getIntent();
         String resultSt = pI.getStringExtra("resultStTmp");
-//        Context apc = getApplicationContext();
-//        SharedPreferences sp = apc.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
-//        SharedPreferences sp = getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
-//        SharedPreferences sp = this.getSharedPreferences("tejyunSp", Context.MODE_PRIVATE);
-//        String resultSt = sp.getString("tejun", "NoResult");
 
         try {
             JSONObject responseJson = new JSONObject(resultSt);
             JSONArray procedureArray = responseJson.getJSONArray("tejun");
 
-          for (int i = 0; i < procedureArray.length(); i++) {
+            for (int i = 0; i < procedureArray.length(); i++) {
 
-            final TableRow procedureRow = new TableRow(this);
+                final TableRow procedureRow = new TableRow(this);
 
-            final TextView rowNoText = new TextView(this);
-            rowNoText.setText(Integer.toString(i + 1));
-            procedureRow.addView(rowNoText, columnLayout);
+                final TextView rowNoText = new TextView(this);
+                rowNoText.setText(Integer.toString(i + 1));
+                procedureRow.addView(rowNoText, columnLayout);
 
-              if (procedureArray.getJSONObject(i).getString("No").equals("C")) {
-                  // Noが"C"の場合はコメント行を追加
-//                  String innerText = procedureArray.getJSONObject(i).getString("コメント");
-                  TextView addColumn = new TextView(this, null, R.attr.S04CommentRowTextDynamic);
-                  innerText = procedureArray.getJSONObject(i).getString("コメント");
-                  addColumn.setText(innerText);
-                  procedureRow.addView(addColumn, columnLayout);
-              } else {
+                if (procedureArray.getJSONObject(i).getString("tx_sno").equals("C")) {
+                    // Noが"C"の場合はコメント行を追加
+                    TextView addColumn = new TextView(this, null, R.attr.S04CommentRowTextDynamic);
+                    innerText = procedureArray.getJSONObject(i).getString("tx_com");
+                    addColumn.setText(innerText);
+                    procedureRow.addView(addColumn, columnLayout);
+                } else {
+                    final TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
+                    boardEquipmentRowText.setText(procedureArray.getJSONObject(i).getString("tx_bname") + "\n" + procedureArray.getJSONObject(i).getString("tx_swname"));
+                    procedureRow.addView(boardEquipmentRowText, columnLayout);
 
-                  final TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
-                  boardEquipmentRowText.setText(procedureArray.getJSONObject(i).getString("盤") + "\n" + procedureArray.getJSONObject(i).getString("機器"));
-                  procedureRow.addView(boardEquipmentRowText, columnLayout);
+                    final Button rowInstructButton = new Button(this, null, R.attr.S04InstructButtonDynamic);
+                    rowInstructButton.setText(procedureArray.getJSONObject(i).getString("tx_action") + "\n　");
+                    rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                    rowInstructButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // 指示ボタンクリック時の詳細処理
 
-                  final Button rowInstructButton = new Button(this, null, R.attr.S04InstructButtonDynamic);
-                  rowInstructButton.setText(procedureArray.getJSONObject(i).getString("指示") + "\n　");
-//            rowInstructButton.setText("自動・遠方");
-                  rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
-                          LinearLayout.LayoutParams.WRAP_CONTENT,
-                          LinearLayout.LayoutParams.WRAP_CONTENT));
-                  rowInstructButton.setOnClickListener(new View.OnClickListener() {
-                      @Override
-                      public void onClick(View v) {
-                          // 指示ボタンクリック時の詳細処理
+                            noText.setText(rowNoText.getText());
+                            boardEquipmentText.setText(boardEquipmentRowText.getText());
+                            instructText.setText(rowInstructButton.getText());
 
-                          noText.setText(rowNoText.getText());
-                          boardEquipmentText.setText(boardEquipmentRowText.getText());
-                          instructText.setText(rowInstructButton.getText());
+                            Resources res = getResources();
+                            int lockColor = res.getColor(R.color.colorYellowButton);
+                            procedureRow.setBackgroundColor(lockColor);
 
-                          Resources res = getResources();
-                          int lockColor = res.getColor(R.color.colorYellowButton);
-                          procedureRow.setBackgroundColor(lockColor);
+                            v.setEnabled(false);
+                        }
+                    });
 
-                          v.setEnabled(false);
-                      }
-                  });
-                  procedureRow.addView(rowInstructButton, columnLayout);
+                     procedureRow.addView(rowInstructButton, columnLayout);
+                }
 
-              }
-
-            procedureTable.addView(procedureRow);
-        }
+                procedureTable.addView(procedureRow);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-/*
-        // TODO:処理の繰り返し数は手順数
-        for (int i = 0; i < 1000; i++) {  // 試験的に1000件に設定
-
-//            final LinearLayout linearLayoutRow = new LinearLayout(this);
-            final LinearLayout linearLayoutRow = new LinearLayout(this,null,R.attr.S04ProcedureRowDynamic);
-            linearLayoutRow.setOrientation(LinearLayout.HORIZONTAL);
-            linearLayout.addView(linearLayoutRow);
-
-            final TextView rowNoText = new TextView(this);
-            rowNoText.setText(Integer.toString(i+1) + "　　　　　");
-            linearLayoutRow.addView(rowNoText);
-
-//            final TextView rowBoardEquipmentText = new TextView(this);
-            final TextView rowBoardEquipmentText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
-            rowBoardEquipmentText.setText("1系コンデンサ(1)～(3)盤\n#43RD-C14");
-  //          textView2.setBackground(R.drawable.simple_frame);
-            linearLayoutRow.addView(rowBoardEquipmentText);
-
-//            final Button rowInstructButton = new Button(this);
-            final Button rowInstructButton = new Button(this,null,R.attr.S04InstructButtonDynamic);
-            rowInstructButton.setText("自動・遠方");
-            rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-            rowInstructButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // 指示ボタンクリック時の詳細処理
-
-                    noText.setText(rowNoText.getText());
-                    boardEquipmentText.setText(rowBoardEquipmentText.getText());
-                    instructText.setText(rowInstructButton.getText());
-
-                    Resources res = getResources();
-                    int lockColor = res.getColor(R.color.colorYellowButton);
-                    linearLayoutRow.setBackgroundColor(lockColor);
-
-                    v.setEnabled(false);
-                }
-            });
-            linearLayoutRow.addView(rowInstructButton);
-        }
-*/
     }
 
     // ボタンクリック時詳細処理
@@ -169,7 +106,7 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
 
         if (id == R.id.site_difference_button) {  // 現場差異ボタン
             this.onClickSiteDiffButton(v);
-        } else if (id == R.id.return_button) {  // MENUへ戻るボタン
+        } else if (id == R.id.return_button) {    // MENUへ戻るボタン
             Intent intent = new Intent(this, TopActivity.class);
 
             Intent pI = getIntent();
@@ -190,7 +127,6 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
         View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
 
         // ボタン設定
-//        popupView.findViewById(R.id.cancel_button).setOnClickListener(this);
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,14 +168,4 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-/*
-    @Override
-    protected void onDestroy() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
-        super.onDestroy();
-    }
-*/
-
 }

@@ -1,4 +1,4 @@
-package com.example.masterkdk.methodverification.net;
+package com.example.masterkdk.methodverification;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
