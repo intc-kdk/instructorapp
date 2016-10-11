@@ -1,11 +1,13 @@
 package com.example.masterkdk.methodverification;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.example.masterkdk.methodverification.net.EndOffActivity;
+import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
 
 /**
  * Created by masterkdk on 2016/09/26.
@@ -14,6 +16,11 @@ import com.example.masterkdk.methodverification.net.EndOffActivity;
 
 public class EndActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String HOST = "192.168.10.20";
+    private static final int PORT = 1280;  // ポート(実環境)
+//    private static final int PORT = 1234;  // ポート(VisualStudio)
+    private static final String TAG_TRANS = "No_UI_Fragment1";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,7 +28,7 @@ public class EndActivity extends AppCompatActivity implements View.OnClickListen
 
         // ボタンへリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
-        findViewById(R.id.two_end_button).setOnClickListener(this);
+//        findViewById(R.id.two_end_button).setOnClickListener(this);
         findViewById(R.id.all_end_button).setOnClickListener(this);
     }
 
@@ -38,11 +45,25 @@ public class EndActivity extends AppCompatActivity implements View.OnClickListen
 
             startActivity(intent);
         } else {
-            // TODO:ボタン別コマンド送信
+            // 全てのタブレットを終了する
+
+            // Fragmentを利用した通信の準備
+            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.add(sendFragment, TAG_TRANS);
+            transaction.commit();
+            fragmentManager.executePendingTransactions();   // 即時実行
+
+            // コマンド送信
+            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+            String data = dataStructureHelper.makeSendData("16","");
+            sendFragment.send(data);
+
             intent = new Intent(this, EndOffActivity.class);
 
-            Intent pI = getIntent();
-            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+//            Intent pI = getIntent();
+//            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
 
             startActivity(intent);
         }

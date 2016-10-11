@@ -23,9 +23,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     /*
      * サーバとの通信処理
      */
-    private static final String HOST = "192.168.10.20";  // 実環境ホスト
-//    private static final int PORT = 1280;  // 実環境ポート
-    private static final int PORT = 1234; // 開発環境ポート
+    private static final String HOST = "192.168.10.20";  // ホスト
+//    private static final int PORT = 1280;  // ポート(実環境)
+    private static final int PORT = 1234; // ポート(VisualStudio)
     private String[] serverResponse = null;
 
     public void startAsyncLoad(String data){
