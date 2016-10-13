@@ -4,7 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
@@ -14,11 +14,12 @@ import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
  * S-06 終了方法選択画面
  */
 
-public class EndActivity extends AppCompatActivity implements View.OnClickListener {
+//public class EndActivity extends AppCompatActivity implements View.OnClickListener {
+public class EndActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
 
     private static final String HOST = "192.168.10.20";
-    private static final int PORT = 1280;  // ポート(実環境)
-//    private static final int PORT = 1234;  // ポート(VisualStudio)
+//    private static final int PORT = 1280;  // ポート(実環境)
+    private static final int PORT = 1234;  // ポート(VisualStudio)
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
     @Override
@@ -44,7 +45,8 @@ public class EndActivity extends AppCompatActivity implements View.OnClickListen
             intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
 
             startActivity(intent);
-        } else {
+//        } else {
+        } else if (id == R.id.all_end_button) {
             // 全てのタブレットを終了する
 
             // Fragmentを利用した通信の準備
@@ -59,13 +61,33 @@ public class EndActivity extends AppCompatActivity implements View.OnClickListen
             DataStructureHelper dataStructureHelper = new DataStructureHelper();
             String data = dataStructureHelper.makeSendData("16","");
             sendFragment.send(data);
+        }
+    }
 
-            intent = new Intent(this, EndOffActivity.class);
+    // サーバからの応答受信
+    @Override
+    public void onResponseRecieved(String data) {
 
-//            Intent pI = getIntent();
-//            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+        System.out.println("ResRecieved");
+
+        DataStructureHelper dsHelper = new DataStructureHelper();
+
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        System.out.println("Command：" + cmd);
+
+        // 応答が正常終了だったら手順書画面へ遷移
+        if (cmd.equals("50")) {
+            Intent intent = new Intent(this, EndOffActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
 
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onFinishTransmission(String data){
+        // 実装する処理はないが、インターフェイス利用の為にオーバーライドが必要
     }
 }

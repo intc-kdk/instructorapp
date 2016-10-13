@@ -13,14 +13,18 @@ import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
 //import com.example.masterkdk.methodverification.loader.SendRequestLoader;
 import com.example.masterkdk.methodverification.net.TcpClient;
 
+import java.util.ArrayList;
+
+import static java.lang.Thread.sleep;
+
 
 /**
  * Created by masterkdk on 2016/09/23.
  * S-03 確認画面
  */
 
-public class ConfirmActivity extends AppCompatActivity implements View.OnClickListener {
-//public class ConfirmActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
+//public class ConfirmActivity extends AppCompatActivity implements View.OnClickListener {
+public class ConfirmActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
 
     private static final String HOST = "192.168.10.20";
 //    private static final int PORT = 1280;  // ポート(実環境)
@@ -42,6 +46,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         int id = v.getId();
         if (id == R.id.ok_button) {
 
+            // サーバの正常終了確認又は2秒経過までボタンの利用停止
+//            v.setEnabled(true);
+//            v.setEnabled(false);  // setEnabledは処理を全て終えてから画面に反映する
+
             // Fragmentを利用した通信の準備
             TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
             FragmentManager fragmentManager = getFragmentManager();
@@ -55,6 +63,39 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             String data = dataStructureHelper.makeSendData("17","");
             sendFragment.send(data);
 
+            // 応答受信を2秒待つ
+/*            try {
+                sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+//            v.setEnabled(true);
+//            v.setEnabled(false);
+
+/*
+            Intent intent = new Intent(this, ProcedureActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
+            startActivity(intent);
+*/
+        }
+    }
+
+    // サーバからの応答受信
+    @Override
+    public void onResponseRecieved(String data) {
+
+        System.out.println("ResRecieved");
+
+        DataStructureHelper dsHelper = new DataStructureHelper();
+
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        System.out.println("Command：" + cmd);
+
+        // 応答が正常終了だったら手順書画面へ遷移
+        if (cmd.equals("50")) {
             Intent intent = new Intent(this, ProcedureActivity.class);
 
             Intent pI = getIntent();
@@ -62,5 +103,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onFinishTransmission(String data){
+        // 実装する処理はないが、インターフェイス利用の為にオーバーライドが必要
     }
 }

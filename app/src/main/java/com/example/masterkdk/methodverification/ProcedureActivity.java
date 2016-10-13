@@ -16,13 +16,16 @@ import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
+/*
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+*/
 public class ProcedureActivity extends AppCompatActivity implements View.OnClickListener{
 
     // 通信
@@ -33,14 +36,13 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
     private static final String TAG_RECEP = "No_UI_Fragment2";
     private static final TransmissionFragment SEND_FRAGMENT = TransmissionFragment.newInstance(HOST,PORT);
     private static final DataStructureHelper DATA_STRUCTURE_HELPER = new DataStructureHelper();
-//    private static final DataStructureHelper dataStructureHelper = new DataStructureHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_procedure);
 
-        // ボタンへリスナを登録
+        // ボタン(固定)へリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
         findViewById(R.id.site_difference_button).setOnClickListener(this);
 
@@ -49,9 +51,11 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
         final TextView boardEquipmentText = (TextView) findViewById(R.id.board_equipment_text);
         final TextView instructText = (TextView) findViewById(R.id.instruct_text);
         TableLayout procedureTable = (TableLayout) findViewById(R.id.procedureTable);
-        String innerText = null;
+//        String innerText = null;
         TableRow.LayoutParams columnLayout = new TableRow.LayoutParams();  // 通常の行のレイアウトパラメータ
         columnLayout.setMargins(8, 8, 8, 8);  // 動的なスタイル設定はstyles.xmlに書いたmarginを利用できない
+        JSONObject rowJSONObject = null;
+        String innerText = null;
 
         // Fragmentを利用した通信の準備
 //        final TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
@@ -74,18 +78,22 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
             // テーブルレイアウトに行を追加し、コメント又は通常の要素を加える
             for (int i = 0; i < procedureArray.length(); i++) {
 
-                // テーブル行の挿入
+                // 新テーブル行の生成
                 final TableRow procedureRow = new TableRow(this);
+
+                rowJSONObject = procedureArray.getJSONObject(i);
 
                 // No.の挿入
                 final TextView rowNoText = new TextView(this);
-                rowNoText.setText(Integer.toString(i + 1));
+                innerText = rowJSONObject.getString("tx_sno");
+                rowNoText.setText(innerText);
                 procedureRow.addView(rowNoText, columnLayout);
 
-                if (procedureArray.getJSONObject(i).getString("tx_sno").equals("C")) {
+//                if (procedureArray.getJSONObject(i).getString("tx_sno").equals("C")) {
+                if (innerText.equals("C")) {
                     // Noが"C"の場合はコメントを追加
                     TextView addColumn = new TextView(this, null, R.attr.S04CommentRowTextDynamic);
-                    innerText = procedureArray.getJSONObject(i).getString("tx_com");
+                    innerText = rowJSONObject.getString("tx_com");
                     addColumn.setText(innerText);
                     procedureRow.addView(addColumn, columnLayout);
                 } else {
@@ -93,12 +101,21 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
 
                     // 盤・機器名
                     final TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
-                    boardEquipmentRowText.setText(procedureArray.getJSONObject(i).getString("tx_bname") + "\n" + procedureArray.getJSONObject(i).getString("tx_swname"));
+                    innerText = rowJSONObject.getString("tx_s_l");
+                    boardEquipmentRowText.setText(innerText);
+//                    boardEquipmentRowText.setText(procedureArray.getJSONObject(i).getString("tx_bname") + "\n" + procedureArray.getJSONObject(i).getString("tx_swname"));
                     procedureRow.addView(boardEquipmentRowText, columnLayout);
 
                     // 指示ボタン
                     final Button rowInstructButton = new Button(this, null, R.attr.S04InstructButtonDynamic);
-                    rowInstructButton.setText(procedureArray.getJSONObject(i).getString("tx_action") + "\n　");
+
+//                    String tmp = rowJSONObject.getString("tx_clr2");  // 社長に値の変更依頼
+             //       rowInstructButton.setBackgroundColor();  // 引数はint
+/*
+                    innerText = rowJSONObject.getString("tx_s_r" + "\n　");
+                    rowInstructButton.setText(innerText);
+*/
+//                    rowInstructButton.setText(procedureArray.getJSONObject(i).getString("tx_action") + "\n　");
                     rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -124,6 +141,9 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
                         }
                     });
 
+                    innerText = rowJSONObject.getString("tx_s_r") + "\n　";
+                    rowInstructButton.setText(innerText);
+
                      procedureRow.addView(rowInstructButton, columnLayout);
                 }
 
@@ -135,7 +155,7 @@ public class ProcedureActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    // ボタンクリック時詳細処理
+    // ボタン(固定)クリック時詳細処理
     @Override
     public void onClick(View v) {
 
