@@ -12,4 +12,5 @@
     <!--S-04 手順書画面-->
     <color name="colorBoardEquipmentText">#99ccff</color>
     <color name="colorInstructButton">#99ffff</color>
+    <color name="colorDiffElement">@android:color/darker_gray</color>
 </resources>

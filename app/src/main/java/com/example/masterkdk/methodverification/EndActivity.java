@@ -75,7 +75,7 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         System.out.println("Command：" + cmd);
 
-        // 応答が正常終了だったら手順書画面へ遷移
+        // 応答が正常終了だったら終了画面へ遷移
         if (cmd.equals("50")) {
             Intent intent = new Intent(this, EndOffActivity.class);
 

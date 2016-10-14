@@ -46,10 +46,6 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
         int id = v.getId();
         if (id == R.id.ok_button) {
 
-            // サーバの正常終了確認又は2秒経過までボタンの利用停止
-//            v.setEnabled(true);
-//            v.setEnabled(false);  // setEnabledは処理を全て終えてから画面に反映する
-
             // Fragmentを利用した通信の準備
             TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
             FragmentManager fragmentManager = getFragmentManager();
@@ -62,24 +58,6 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
             DataStructureHelper dataStructureHelper = new DataStructureHelper();
             String data = dataStructureHelper.makeSendData("17","");
             sendFragment.send(data);
-
-            // 応答受信を2秒待つ
-/*            try {
-                sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-//            v.setEnabled(true);
-//            v.setEnabled(false);
-
-/*
-            Intent intent = new Intent(this, ProcedureActivity.class);
-
-            Intent pI = getIntent();
-            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
-
-            startActivity(intent);
-*/
         }
     }
 
@@ -96,6 +74,7 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
 
         // 応答が正常終了だったら手順書画面へ遷移
         if (cmd.equals("50")) {
+//        if (cmd.equals("53")) {
             Intent intent = new Intent(this, ProcedureActivity.class);
 
             Intent pI = getIntent();
