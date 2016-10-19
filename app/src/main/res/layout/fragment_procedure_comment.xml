@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/colorBackGround"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/proc_comment"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:gravity="center_vertical"
+        android:textSize="30sp"
+        android:layout_weight="31.71"
+        android:layout_width="790dp"
+        android:textColor="@color/colorText"
+        android:text="１１１１１１１１"
+        android:minHeight="100dp" />
+
+</LinearLayout>

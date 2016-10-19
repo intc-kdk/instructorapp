@@ -1,21 +1,24 @@
 package com.example.masterkdk.methodverification;
 
-import android.app.Fragment;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.masterkdk.methodverification.Helper.SettingPrefUtil;
+import com.example.masterkdk.methodverification.Util.SettingPrefUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -101,8 +104,12 @@ public class ReceptionFragment extends Fragment {
             protected String doInBackground(Void... voids) {
                 String message = "";
                 try{
-                    mServer = new ServerSocket(mPort);
-                    mServer.setReuseAddress(true);
+                    if(mServer == null) {
+                        mServer = new ServerSocket();
+
+                        mServer.setReuseAddress(true);
+                        mServer.bind(new InetSocketAddress(mPort));
+                    }
                     mSocket = mServer.accept();
                     reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                     writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
@@ -117,18 +124,20 @@ public class ReceptionFragment extends Fragment {
                         }
                     }
                     message=builder.toString();
-
+                    System.out.println("<< サーバーから受信 >>"+message);
                     // Activity へ リクエストを返し、返信データ（response）を受け取る
                     response = ((ReceptionFragmentListener)getActivity()).onRequestRecieved(message);
 
                     if(response.equals("")) {
                         // データ未設定の時、コネクションクローズ
+                        System.out.println("<< 一方送信のため終了 >>");
                         reader.close();
-                        mSocket.close(); //
+                        mSocket.close();
                     }else{
                         // データが設定されているとき、レスポンス送信
                         writer.write(response);
                         writer.flush();
+                        System.out.println("<< サーバーへ送信 >>"+response);
                         reader.close();
                         mSocket.close(); //
                     }
@@ -138,12 +147,12 @@ public class ReceptionFragment extends Fragment {
                 }catch(IOException e){
                     e.printStackTrace();
                 } finally {
-                    /*try{
+                    try{
                         reader.close();
                         mSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }*/
+                    }
                 }
                 // publishProgress();  // onProgressUpdateが呼ばれる
                 return message;
@@ -151,12 +160,12 @@ public class ReceptionFragment extends Fragment {
             @Override
             protected void onProgressUpdate(StringBuilder... message){
                 String result = message.toString();
-                System.out.println(message.toString());
             }
             //doInBackGroundの結果を受け取る
             @Override
             protected void onPostExecute(String result){
-                //mTextView.setText(result);
+                // 応答処理終了
+                ((ReceptionFragmentListener)getActivity()).onFinishRecieveProgress();
             }
         }.execute();
     }
@@ -166,5 +175,26 @@ public class ReceptionFragment extends Fragment {
      */
     public interface ReceptionFragmentListener {
         String onRequestRecieved(String data);
+        void onFinishRecieveProgress();
+
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+    }
+
+    public void closeServer(){
+        if(mServer != null) {
+            try {
+                mServer.close();
+            } catch (SocketException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+
+            }
+        }
     }
 }

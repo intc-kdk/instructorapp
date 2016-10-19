@@ -67,6 +67,10 @@
     <style name="S01TableProcedure">
         <item name="android:background">@android:color/black</item>
         <item name="android:layout_gravity">center</item>
+
+        <!--改行対応 TableLayoutにlayout_widthは設定できない？-->
+        <!--<item name="android:layout_width">790dp</item>-->
+
     </style>
     <style name="S01TableColumnProcedure">
         <item name="android:background">@android:color/white</item>

@@ -1,4 +1,4 @@
-package com.example.masterkdk.methodverification.Helper;
+package com.example.masterkdk.methodverification.Util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,6 +17,7 @@ public class SettingPrefUtil {
 
     private static final String KEY_SERVER_PORT = "port.server";    // key
     private static final int KEY_SERVER_PORT_DEFAULT = 1234;   // default value
+//    private static final int KEY_SERVER_PORT_DEFAULT = 1280;
 
     private static final String KEY_CLIENT_PORT = "port.client";    // key
     private static final int KEY_CLIENT_PORT_DEFAULT = 5678;   // default value

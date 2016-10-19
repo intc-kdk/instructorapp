@@ -4,12 +4,14 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.masterkdk.methodverification.Util.SettingPrefUtil;
 import com.example.masterkdk.methodverification.loader.SendRequestLoader;
 
 /**
@@ -37,26 +39,22 @@ public class TransmissionFragment extends Fragment implements LoaderManager.Load
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param host server host.
-     * @param port server port.
      * @return A new instance of fragment TransmissionFragment.
      */
-    public static TransmissionFragment newInstance(String host, int port) {
+    public static TransmissionFragment newInstance() {
         TransmissionFragment fragment = new TransmissionFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_HOST, host);
-        args.putInt(ARG_PORT, port);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mHost = getArguments().getString(ARG_HOST);
-            mPort = getArguments().getInt(ARG_PORT);
-        }
+
+        // ShraedPreferencesから取得
+        Context context = getActivity();
+        mHost = SettingPrefUtil.getServerIpAddress(context);
+        mPort = SettingPrefUtil.getServerPort(context);
     }
 
     @Override
@@ -99,8 +97,10 @@ public class TransmissionFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<String> loader, String data) {
         int id = loader.getId();
 
-        ((TransmissionFragmentListener)getActivity()).onResponseRecieved(data);  // Activity event
         getLoaderManager().destroyLoader(id);  // ローダーを破棄
+
+        ((TransmissionFragmentListener)getActivity()).onResponseRecieved(data);  // Activity event
+
     }
 
     @Override
@@ -109,14 +109,14 @@ public class TransmissionFragment extends Fragment implements LoaderManager.Load
     }
 
     public void send(String data){
-        System.out.println("send");
         if(data != null) {
             Bundle args = new Bundle();
             args.putString("Data",data);
             // Loaderを初期化する
-            getLoaderManager().initLoader(0, args, this);  // onCreateLoaderが呼ばれる
+            getLoaderManager().restartLoader(1, args, this);  // onCreateLoaderが呼ばれる
         }
     }
+
     /**
 
      */

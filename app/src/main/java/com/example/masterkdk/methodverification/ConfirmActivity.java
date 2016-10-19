@@ -5,15 +5,11 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 //import com.example.masterkdk.methodverification.TransmissionFragment;
-import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
+import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 //import com.example.masterkdk.methodverification.loader.SendRequestLoader;
-import com.example.masterkdk.methodverification.net.TcpClient;
-
-import java.util.ArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -47,7 +43,8 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
         if (id == R.id.ok_button) {
 
             // Fragmentを利用した通信の準備
-            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
+//            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
+            TransmissionFragment sendFragment = TransmissionFragment.newInstance();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(sendFragment, TAG_TRANS);
@@ -55,9 +52,17 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
             fragmentManager.executePendingTransactions();   // 即時実行
 
             // コマンド送信
-            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+//            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+            DataStructureUtil dataStructureHelper = new DataStructureUtil();
             String data = dataStructureHelper.makeSendData("17","");
             sendFragment.send(data);
+/*
+            // デバッグの為の仮の遷移
+            Intent intent = new Intent(this, ProcedureActivity.class);
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+            startActivity(intent);
+*/
         }
     }
 
@@ -67,14 +72,14 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
 
         System.out.println("ResRecieved");
 
-        DataStructureHelper dsHelper = new DataStructureHelper();
+//        DataStructureHelper dsHelper = new DataStructureHelper();
+        DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         System.out.println("Command：" + cmd);
 
         // 応答が正常終了だったら手順書画面へ遷移
         if (cmd.equals("50")) {
-//        if (cmd.equals("53")) {
             Intent intent = new Intent(this, ProcedureActivity.class);
 
             Intent pI = getIntent();

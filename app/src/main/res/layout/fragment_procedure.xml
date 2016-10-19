@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:background="@color/colorBackGround">
+
+    <TextView
+        android:id="@+id/proc_number"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textAlignment="center"
+        tools:text="1"
+        android:gravity="center_vertical|center"
+        android:textSize="25sp"
+        android:layout_width="50dp" />
+
+    <TextView
+        android:id="@+id/proc_place"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:background="@color/colorBoardEquipmentText"
+        android:gravity="center_vertical|center"
+        android:text="1111111111111111111111111111111111111111111111111111"
+        android:textSize="25sp"
+        android:layout_width="350dp" />
+
+    <TextView
+        android:layout_height="match_parent"
+        android:id="@+id/proc_operation"
+        android:layout_weight="1"
+        android:background="@color/colorInstructButton"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:layout_width="175dp"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="match_parent"
+        android:id="@+id/proc_remarks"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
+        android:textAlignment="center"
+        android:textSize="12sp" />
+</LinearLayout>

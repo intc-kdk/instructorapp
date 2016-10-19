@@ -4,354 +4,233 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.provider.Settings;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
+import com.example.masterkdk.methodverification.Util.DataStructureUtil;
+import com.example.masterkdk.methodverification.Util.DataStructureUtil.ProcItem;
 
+import java.util.List;
+/*
+ *  K-02 手順書画面
+*/
 
-//public class ProcedureActivity extends AppCompatActivity implements View.OnClickListener{
-//public class ProcedureActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
-public class ProcedureActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener {
-    // 通信
-    private static final String HOST = "192.168.10.20";
-//    private static final int PORT = 1280;  // ポート(実環境)
-    private static final int PORT = 1234;  // ポート(VisualStudio)
+public class ProcedureActivity extends AppCompatActivity
+        implements TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener,
+        ProcedureFragment.OnListFragmentInteractionListener{
+
     private static final String TAG_TRANS = "No_UI_Fragment1";
     private static final String TAG_RECEP = "No_UI_Fragment2";
-    private static final TransmissionFragment SEND_FRAGMENT = TransmissionFragment.newInstance(HOST,PORT);
+    private static final int REQUEST_CODE_OPERATION = 1;
 
-    private static final ReceptionFragment recieveFragment = ReceptionFragment.newInstance();
+    private FragmentTransaction transaction;
+    private FragmentManager fragmentManager;
 
-    private static final DataStructureHelper DATA_STRUCTURE_HELPER = new DataStructureHelper();
-    private TableRow instructProcedure = null;  // 指示後の行
-    private String instructNo = "";  // 指示後の手順書番号
-    private TableLayout instructProcedureTable = null;
+    private TransmissionFragment sendFragment;
+    private ReceptionFragment recieveFragment;
+    private ProcedureFragment mProcFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_procedure);
 
-        // ボタン(固定)へリスナを登録
-        findViewById(R.id.return_button).setOnClickListener(this);
-        findViewById(R.id.site_difference_button).setOnClickListener(this);
+        //  手順書フラグメントの取得
+        mProcFragment = (ProcedureFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.ProcedureList);
 
-        // 手順の表示処理
-        final TextView noText = (TextView) findViewById(R.id.no_text);
-        final TextView boardEquipmentText = (TextView) findViewById(R.id.board_equipment_text);
-        final TextView instructText = (TextView) findViewById(R.id.instruct_text);
-        TableLayout procedureTable = (TableLayout) findViewById(R.id.procedureTable);
-        TableRow.LayoutParams columnLayout = new TableRow.LayoutParams();  // 通常の行のレイアウトパラメータ
-        columnLayout.setMargins(8, 8, 8, 8);  // 動的なスタイル設定はstyles.xmlに書いたmarginを利用できない
-        JSONObject rowJSONObject = null;  // 1行毎のJSONObject
-        String innerText = null;  // 表示文字列の一時的な保管
-        String beforeRowStatus = "0";  // 1段上の手順の状態(cd_status)
-        boolean beforeRowDifference = false;
-        String stringTemp = null;
-        int[] intArrayTemp = {};
-        Boolean booleanTemp = false;
-        Boolean booleanTemp2 = false;
+        // 初回起動時のみ、手順のカレント表示はマニュアル設定
+        mProcFragment.setFirstProcedure();
 
-        // 通信用Fragment初期化
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(SEND_FRAGMENT, TAG_TRANS);
+        // TransmissionFragment/ReceptionFragment を　生成
+        sendFragment = TransmissionFragment.newInstance();
+        recieveFragment = ReceptionFragment.newInstance();
 
+        fragmentManager = getFragmentManager();
+        transaction = fragmentManager.beginTransaction();
+        transaction.add(sendFragment, TAG_TRANS);
         transaction.add(recieveFragment, TAG_RECEP);
 
         transaction.commit();
         fragmentManager.executePendingTransactions();   // 即時実行
 
-        // 手順スクロール部は設置状況確認画面で取得した値を利用する
-        Intent pI = getIntent();
-        String resultSt = pI.getStringExtra("resultStTmp");
-
-        try {
-            JSONObject responseJson = new JSONObject(resultSt);
-            JSONArray procedureArray = responseJson.getJSONArray("tejun");
-
-            // テーブルレイアウトに行を追加し、コメント又は通常の要素を加える
-            for (int i = 0; i < procedureArray.length(); i++) {
-
-                // 新テーブル行の生成
-                final TableRow procedureRow = new TableRow(this);
-
-                rowJSONObject = procedureArray.getJSONObject(i);
-
-                // Noを表示
-                final TextView rowNoText = new TextView(this);
-                innerText = rowJSONObject.getString("tx_sno");
-                rowNoText.setText(innerText);
-                procedureRow.addView(rowNoText, columnLayout);
-
-                if (innerText.equals("C")) {
-                    // Noが"C"の場合はコメントを追加
-                    rowNoText.setVisibility(View.INVISIBLE);  // コメント行はNo非表示
-                    TextView addColumn = new TextView(this, null, R.attr.S04CommentRowTextDynamic);
-                    innerText = rowJSONObject.getString("tx_com");
-                    addColumn.setText(innerText);
-                    procedureRow.addView(addColumn, columnLayout);
-                } else {
-                    // 通常の行の追加
-
-                    // 盤・機器名
-                    final TextView boardEquipmentRowText = new TextView(this, null, R.attr.S04BoardEquipmentTextDynamic);
-                    innerText = rowJSONObject.getString("tx_s_l");
-                    boardEquipmentRowText.setText(innerText);
-                    procedureRow.addView(boardEquipmentRowText, columnLayout);
-
-                    // 指示ボタン
-                    final Button rowInstructButton = new Button(this, null, R.attr.S04InstructButtonDynamic);
-
-//                    stringTemp = "#" + rowJSONObject.getString("tx_clr2");
-//                    rowInstructButton.setBackgroundColor(Color.parseColor(stringTemp));
-
-                    rowInstructButton.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                    rowInstructButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // 指示ボタンクリック時の詳細処理
-
-                            // ヘッダへの値表示(No、盤・機器名、指示名)
-                            noText.setText(rowNoText.getText());
-                            boardEquipmentText.setText(boardEquipmentRowText.getText());
-                            instructText.setText(rowInstructButton.getText());
-
-                            // コマンド送信
-                            //hashCode()
-                            String data = DATA_STRUCTURE_HELPER.makeSendData("13","{\"手順書番号\":\"" + rowNoText.getText() + "\"}");
-                            SEND_FRAGMENT.send(data);
-/*
-                            // 選択行の着色と指示ボタンの無効化
-                            Resources res = getResources();
-                            int lockColor = res.getColor(R.color.colorYellowButton);
-                            procedureRow.setBackgroundColor(lockColor);
-                            v.setEnabled(false);
-*/
-                            // 後のイベント処理の為に値を控えておく
-                            instructProcedure = procedureRow;
-                            instructNo = rowNoText.getText().toString();
-                        }
-                    });
-
-                    innerText = rowJSONObject.getString("tx_s_r") + "\n　";
-                    rowInstructButton.setText(innerText);
-
-                    // 行の状態を設定
-                    stringTemp = rowJSONObject.getString("cd_status");
-                    booleanTemp = rowJSONObject.getBoolean("bo_gs");
-                    if (stringTemp.equals("1") && !booleanTemp) {  // 指示後かつ現場差異無しの行を着色
-                        procedureRow.setBackgroundColor(getResources().getColor(R.color.colorYellowButton));
-                        instructProcedure = procedureRow;
-                        instructNo = stringTemp;
-                    }
-                    // ボタンの状態を設定
-                    if((i == 0 && stringTemp.equals("0"))  // 指示できる順番の未発令の手順
-                            || (stringTemp.equals("0") && beforeRowStatus.equals("7"))
-                            )
-//                            || (stringTemp.equals("0") && beforeRowDifference))  // TODO:現場差異は後回し
-                    {
-//                    if(i == 0 && stringTemp.equals("0")) {
-                        booleanTemp2 = true;
-                    } else if(!stringTemp.equals("0")) {
-                        booleanTemp2 = false;  // 指示後及び確認後の手順
-                        stringTemp = "#" + rowJSONObject.getString("tx_clr2");
-                        rowInstructButton.setBackgroundColor(Color.parseColor(stringTemp));
-                        rowInstructButton.setTextColor(Color.parseColor("#FFFFFF"));
-                    } else {
-                        booleanTemp2 = false;  // まだ指示できない未発令の手順
-                    }
-                    rowInstructButton.setEnabled(booleanTemp2);
-                    beforeRowStatus = stringTemp;
-                    beforeRowDifference = booleanTemp;
-
-                     procedureRow.addView(rowInstructButton, columnLayout);
-                }
-
-                procedureTable.addView(procedureRow);
-
-                instructProcedureTable = procedureTable;
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // サーバーからの指示を待機
+        recieveFragment.listen();
     }
 
-    // サーバからの応答受信
     @Override
-    public void onResponseRecieved(String data) {
+    protected void onStart() {
+        super.onStart();
 
-        System.out.println("ResRecieved");
+    }
 
-        DataStructureHelper dsHelper = new DataStructureHelper();
 
-        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
-        System.out.println("Command：" + cmd);
+    @Override
+    public void onListFragmentInteraction(Bundle rcBundle) {
+        // Fragmentからの通知で、ヘッダの表示を更新する
+        if(rcBundle.getString("cd_status").equals("1")) {   // 状態が実行通の時
+            TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
+            TextView tvPlace = (TextView) findViewById(R.id.title_proc_place);
+            TextView tvAction = (TextView) findViewById(R.id.title_proc_action);
+            TextView tvRemarks = (TextView) findViewById(R.id.title_proc_remarks);
 
-        if (cmd.equals("50")) {  // 発令が受信された
-
-            // 選択行の着色と指示ボタンの無効化
-            int lockColor = getResources().getColor(R.color.colorYellowButton);
-            instructProcedure.setBackgroundColor(lockColor);
-            instructProcedure.getChildAt(2).setEnabled(false);
-
-//        if (cmd.equals("55")) {  // 確認者アプリで確認が行われた
-/*
-        } else if (cmd.equals("55")) {  // 確認者アプリで確認が行われた
-            // 指示中の手順を確認済みへ変更　行の着色を消し、指示ボタンの色をtx_cle2の値、下の手順の指示ボタンを利用可能にする
-            int instructNoInt = Integer.parseInt(instructNo);
-            TableRow instructRow = (TableRow) instructProcedureTable.getChildAt(instructNoInt);
-            instructRow.setBackgroundColor(Color.parseColor("FF000000"));
-            TableRow instructRowNew = (TableRow) instructProcedureTable.getChildAt(instructNoInt + 1);
-            instructRowNew.getVirtualChildAt(2).setEnabled(true);
-*/
-
-        } else if (cmd.equals("56")) {
-            // 指示前又は指示中の手順を現場差異の表示　行を着色、下の手順の指示ボタンを利用可能にする
-
-//            int elementNum = instructProcedure.getVirtualChildCount();
-            int elementNum = instructProcedure.getChildCount();
-            int diffColor = getResources().getColor(R.color.colorDiffElement);
-            for (int i = 0; i < elementNum; i++) {
-                instructProcedure.getChildAt(i).setBackgroundColor(diffColor);
-//                instructProcedure.getVirtualChildAt(i).setBackgroundColor(diffColor);
-            }
-//            View v = instructProcedure.getVirtualChildAt(1);
-//            System.out.println("出力：" + v);
-
-            mPopupWindow.dismiss();
+            tvNo.setText(rcBundle.getString("tx_sno"));
+            tvPlace.setText(rcBundle.getString("tx_s_l"));
+            tvAction.setText(rcBundle.getString("tx_action"));
+            tvRemarks.setText(rcBundle.getString("tx_biko"));
         }
+    }
+    @Override
+    public void onListItemClick(ProcItem item){
+
+        // 指示ボタンタップ時の詳細処理
+        System.out.println("CLICK!:"+item.tx_sno);
+
+        // ヘッダへの値表示(No、盤・機器名、指示名)
+        TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
+        TextView tvPlace = (TextView) findViewById(R.id.title_proc_place);
+        TextView tvAction = (TextView) findViewById(R.id.title_proc_action);
+        TextView tvRemarks = (TextView) findViewById(R.id.title_proc_remarks);
+        tvNo.setText(item.tx_sno);
+        tvPlace.setText(item.tx_s_l);
+        tvAction.setText(item.tx_action);
+        tvRemarks.setText(item.tx_biko);
+
+        // コマンド送信
+        DataStructureUtil dsHelper = new DataStructureUtil();
+        String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.tx_sno + "\"}");
+        sendFragment.send(data);
+
+//        item.
+    }
+
+    private void setProcActivate(){
+    }
+
+    /* 応答受信 */
+    @Override
+    public void onResponseRecieved(String data)  {
+        // TODO: [P] ログを取得
+        System.out.println("CLICK!:" + data);
+
+        DataStructureUtil dsHelper = new DataStructureUtil();
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+
+        if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
+            // 選択行の着色と指示ボタンの無効化
+            Resources res = getResources();
+            int lockColor = res.getColor(R.color.colorYellowButton);
+//        item.setBackgroundColor(lockColor);
+//        item.setEnabled(false);
+//            mProcFragment.setA
+        }
+
+        // サーバーからの指示を待機
+        recieveFragment.listen();
     }
 
     @Override
     public void onFinishTransmission(String data){
-        // 実装する処理はないが、インターフェイス利用の為にオーバーライドが必要
+        // 送信処理終了
+
     }
 
     /* 要求受信 */
     @Override
-    public String onRequestRecieved(String data) {
+    public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
         //System.out.println("ReqRecieved:"+data);
-        DataStructureHelper dsHelper = new DataStructureHelper();
+        DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+//        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
 
-        if (cmd.equals("55")) {  // 確認者アプリで確認が行われた
-            // 指示中の手順を確認済みへ変更　行の着色を消し、指示ボタンの色をtx_cle2の値、下の手順の指示ボタンを利用可能にする
-            int instructNoInt = Integer.parseInt(instructNo);
-            TableRow instructRow = (TableRow) instructProcedureTable.getChildAt(instructNoInt);
-            instructRow.setBackgroundColor(Color.parseColor("FF000000"));
-            TableRow instructRowNew = (TableRow) instructProcedureTable.getChildAt(instructNoInt + 1);
-            instructRowNew.getVirtualChildAt(2).setEnabled(true);
+        if(cmd.equals("55")) { // 確認者タブレットで確認されたことを通知
+            System.out.println("CLICK!:" + data);
+//            mProcFragment.updateProcedure();  // エラー発生
         }
+/*
+        if(cmd.equals("63")) { //指示命令
+            if (bdRecievedData.getString("format").equals("TEXT")) {
+                // 操作対象を取得
+                List<ProcItem> item = mProcFragment.getCurrentProcedure();
 
-        return cmd;
+                Bundle bdCur = new Bundle();
+
+                bdCur.putInt("in_sno", item.get(0).in_sno);
+                bdCur.putString("tx_sno", item.get(0).tx_sno);
+                bdCur.putString("tx_s_l", item.get(0).tx_s_l);
+                bdCur.putString("tx_action", item.get(0).tx_action);
+                bdCur.putString("tx_b_l", item.get(0).tx_b_l);
+                bdCur.putString("tx_b_r", item.get(0).tx_b_r);
+                bdCur.putString("tx_clr1", item.get(0).tx_clr1);
+                bdCur.putString("tx_clr2", item.get(0).tx_clr2);
+                bdCur.putString("tx_biko", item.get(0).tx_biko);
+                bdCur.putString("cd_status", item.get(0).cd_status);
+
+                Bundle bdPair = new Bundle();
+
+                bdPair.putInt("in_sno", item.get(1).in_sno);
+                bdPair.putString("tx_sno", item.get(1).tx_sno);
+                bdPair.putString("tx_s_l", item.get(1).tx_s_l);
+                bdPair.putString("tx_action", item.get(1).tx_action);
+                bdPair.putString("tx_b_l", item.get(1).tx_b_l);
+                bdPair.putString("tx_b_r", item.get(1).tx_b_r);
+                bdPair.putString("tx_clr1", item.get(1).tx_clr1);
+                bdPair.putString("tx_clr2", item.get(1).tx_clr2);
+                bdPair.putString("cd_status", item.get(1).cd_status);
+
+
+                //Intent生成
+                Intent intent = new Intent(this, OperationActivity.class);
+
+                intent.putExtra("current", bdCur);
+                intent.putExtra("pair", bdPair);
+
+                //盤操作画面を起動
+                startActivityForResult(intent, REQUEST_CODE_OPERATION);
+            }
+        }
+*/
+        return "";
     }
 
-    // ボタン(固定)クリック時詳細処理
     @Override
-    public void onClick(View v) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        // 盤操作画面からの戻り
+        super.onActivityResult(requestCode, resultCode, data);
 
-        int id = v.getId();
+        if(resultCode != RESULT_OK) return;
+        Bundle resultBundle = data.getExtras();
 
-        if (id == R.id.site_difference_button) {  // 現場差異ボタン
-            this.onClickSiteDiffButton(v);
-        } else if (id == R.id.return_button) {    // MENUへ戻るボタン
-            Intent intent = new Intent(this, TopActivity.class);
+        if(!resultBundle.containsKey("in_sno")) return;
+        String status = resultBundle.getString("status");
+        int in_sno = resultBundle.getInt("in_sno");
 
-            Intent pI = getIntent();
-            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+        if(requestCode == REQUEST_CODE_OPERATION) {
+            // 該当操作のステータスを更新
+            int position = mProcFragment.getCurrentPos();
 
-            startActivity(intent);
+            mProcFragment.setProcStatus(position, status);   // 対象のエントリの更新
+
+            if(mProcFragment.getLastInSno() > in_sno) {
+                mProcFragment.updateProcedure();                 // 次のエントリへ進める
+
+                // サーバーからの指示を待機
+                recieveFragment.listen();
+            }else{
+                // 最終手順の時、終了画面表示
+                Intent intent = new Intent(this,EndActivity.class);
+                startActivity(intent);
+
+            }
+
         }
     }
-
-    // ポップアップの初期化
-    private PopupWindow mPopupWindow;
-
-    public void onClickSiteDiffButton(View v) {
-
-        mPopupWindow = new PopupWindow(ProcedureActivity.this);
-//        static String data = null;
-
-                // レイアウト設定
-        View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
-
-        // ボタン設定  TODO:現場差異は指示の有無に関わらず可能にする
-        popupView.findViewById(R.id.procedure_skip_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {  // この手順をスキップする
-                String data = DATA_STRUCTURE_HELPER.makeSendData("14","{\"手順書番号\":\"" + instructNo + "\",\"コマンド\":\"1\"}");
-                SEND_FRAGMENT.send(data);
-            }
-        });
-        popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {  // この手順の前に操作を追加する  TODO:検証未実施
-                String data = DATA_STRUCTURE_HELPER.makeSendData("14","{\"手順書番号\":\"\" + instructNo + \",\"コマンド\":\"2\"}");
-                SEND_FRAGMENT.send(data);
-            }
-        });
-        popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPopupWindow.isShowing()) {  // キャンセル
-                    mPopupWindow.dismiss();
-                }
-            }
-        });
-
-        mPopupWindow.setContentView(popupView);
-
-        // 背景設定
-        mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_background));
-
-        // タップ時に他のViewでキャッチされないための設定
-        mPopupWindow.setOutsideTouchable(true);
-        mPopupWindow.setFocusable(true);
-
-        // 表示サイズの設定 今回は幅450dp
-        float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 450, getResources().getDisplayMetrics());
-        mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setWidth((int) width);
-        mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-
-        // 現場差異ボタンの行に表示
-        mPopupWindow.showAtLocation(findViewById(R.id.site_difference_button), Gravity.NO_GRAVITY, 300, 250);
-
-        // 手順書画面フッタにメッセージを表示
-        final TextView siteDifferenceText = (TextView) findViewById(R.id.site_diff_text);
-        String siteDifferenceTextString = getString(R.string.S_05_site_difference_text);
-        siteDifferenceText.setText(siteDifferenceTextString);
-
-        // ポップアップ削除時は、手順書画面フッタのメッセージも削除
-        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                // キャンセルボタンだけでなく、ポップアップ外タップ時にも対応
-                siteDifferenceText.setText("");
-            }
-        });
+    @Override
+    public void onFinishRecieveProgress() {
+        // コマンド送受信後の 次への処理判定
     }
+
 }

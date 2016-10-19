@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.example.masterkdk.methodverification.Helper.DataStructureHelper;
+//import com.example.masterkdk.methodverification.Util.DataStructureHelper;
+import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 
 /**
  * Created by masterkdk on 2016/09/26.
@@ -50,7 +51,8 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             // 全てのタブレットを終了する
 
             // Fragmentを利用した通信の準備
-            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
+//            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
+            TransmissionFragment sendFragment = TransmissionFragment.newInstance();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(sendFragment, TAG_TRANS);
@@ -58,7 +60,8 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             fragmentManager.executePendingTransactions();   // 即時実行
 
             // コマンド送信
-            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+//            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+            DataStructureUtil dataStructureHelper = new DataStructureUtil();
             String data = dataStructureHelper.makeSendData("16","");
             sendFragment.send(data);
         }
@@ -70,7 +73,8 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
 
         System.out.println("ResRecieved");
 
-        DataStructureHelper dsHelper = new DataStructureHelper();
+//        DataStructureHelper dsHelper = new DataStructureHelper();
+        DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         System.out.println("Command：" + cmd);

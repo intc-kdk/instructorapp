@@ -24,8 +24,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * サーバとの通信処理
      */
     private static final String HOST = "192.168.10.20";  // ホスト
+//    private static final String HOST = "192.168.126.1";  // TCPシミュレータ???
 //    private static final int PORT = 1280;  // ポート(実環境)
-    private static final int PORT = 1234; // ポート(VisualStudio)
+    private static final int PORT = 1234; // ポート(VB.net)
     private String[] serverResponse = null;
 
     public void startAsyncLoad(String data){
@@ -64,13 +65,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             // 行の追加
             for (int i = 0; i < tabletArray.length(); i++) {
                 addRow = new TableRow(this);
+
                 // 列を左から追加
                 for (int j = 0; j < columnNum; j++) {
                     innerText = tabletArray.getJSONObject(i).getString(tabletTableItem[j]);
+                    if (tabletTableItem[j].equals("状況")) {
+                        innerText = (innerText.equals("False")) ? "" : "○";
+                    }
                     addColumn = new TextView(this, null, R.attr.S01TabletTableColumnDynamic);
                     addColumn.setText(innerText);
                     addRow.addView(addColumn, columnLayout);
                 }
+
                 tableTablet.addView(addRow);
             }
 
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         addColumn = new TextView(this, null, R.attr.S01ProcedureTableColumnDynamic);
 
                         // テーブル幅の伸長を抑止する
-//                        innerText = innerText.replace("<br>", "\n");
+//                        addColumn.setMinHeight(150);  // 150は暫定値。これでTableLayoutの幅の"wrap_parent"を解除して数値指定で固定すればいける？？
                         addColumn.setText(innerText);
                         addRow.addView(addColumn, columnLayout);
                     }
@@ -116,7 +122,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
 
             // 手順書の保存
-            this.resultStTmp = resultArr[1];
+//            this.resultStTmp = resultArr[1];
+            this.resultStTmp = result;
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -145,11 +152,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         byte[] bytes = str1.getBytes(StandardCharsets.UTF_8);
         String str = new String(bytes, StandardCharsets.US_ASCII);
         startAsyncLoad(str);
-/*        while (serverResponse == null) {
-            TODO:テーブル表示と同期させるため処理を一旦止める
-            // この方法では、ここで処理が止まってしまい、SendRequestLoaderの処理を開始できない
-        }
-*/
 
         // ボタンへリスナを登録
         findViewById(R.id.menu_button).setOnClickListener(this);
