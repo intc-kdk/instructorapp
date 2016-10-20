@@ -106,14 +106,19 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             mOperationView.setOnClickListener(this);  //  操作ボタンにリスナー設定
 
         }
+
+        private boolean noTap = true;  // 未タップフラグ
+
         public void onClick(View view){
 
-            // 対象の操作の時のみ、Activityへ通知
+            // 対象の操作の時のみ、Activityへ通知。タップ制限の実装は暫定
             int position = getAdapterPosition();
-            if(mValues.get(position).cd_status.equals("1")) {
+            if(mValues.get(position).cd_status.equals("1") && noTap) {
+                noTap = false;
                 mAdapter.onButtonClick(mView, getAdapterPosition());
             }
         }
+
         @Override
         public String toString() {
             return super.toString() + " '" + mOperationView.getText() + "'";
@@ -141,7 +146,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色
 //            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色
             int txtColor= res.getColor(R.color.colorTextBlack);
-            if(data.cd_status.equals("1")){   // 実行中の時
+            if(data.cd_status.equals("1")){   // 指示前かつ発令可能な時(実装上の都合)
                 bgColor = res.getColor(R.color.colorYellowButton);
             }
             if(data.cd_status.equals("7")){   // 実行終了の時

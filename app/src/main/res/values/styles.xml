@@ -16,6 +16,10 @@
         <item name="S04CommentRowTextDynamic">@style/S04CommentRowText</item>
     </style>
 
+    <style name="AppInstructTheme" parent="AppTheme">
+        <item name="android:background">@android:color/holo_red_light</item>
+    </style>
+
     <style name="AppBasic">
         <item name="android:background">@color/colorBackGround</item>
     </style>

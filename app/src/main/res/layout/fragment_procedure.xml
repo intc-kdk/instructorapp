@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="100dp"
-    android:orientation="horizontal"
-    android:background="@color/colorBackGround">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/proc_number"

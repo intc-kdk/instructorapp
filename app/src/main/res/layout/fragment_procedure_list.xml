@@ -10,5 +10,4 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.masterkdk.methodverification.ProcedureFragment"
-    tools:listitem="@layout/fragment_procedure"
-    android:background="@color/colorBackGround" />
+    tools:listitem="@layout/fragment_procedure" />

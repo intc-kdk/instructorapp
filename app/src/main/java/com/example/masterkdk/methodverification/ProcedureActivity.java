@@ -1,12 +1,12 @@
 package com.example.masterkdk.methodverification;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
@@ -19,7 +19,8 @@ import java.util.List;
 
 public class ProcedureActivity extends AppCompatActivity
         implements TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener,
-        ProcedureFragment.OnListFragmentInteractionListener{
+//        ProcedureFragment.OnListFragmentInteractionListener{
+        ProcedureFragment.OnListFragmentInteractionListener, View.OnClickListener {
 
     private static final String TAG_TRANS = "No_UI_Fragment1";
     private static final String TAG_RECEP = "No_UI_Fragment2";
@@ -58,6 +59,10 @@ public class ProcedureActivity extends AppCompatActivity
 
         // サーバーからの指示を待機
         recieveFragment.listen();
+
+        // ボタン(固定)へリスナを登録
+        findViewById(R.id.return_button).setOnClickListener(this);
+//        findViewById(R.id.site_difference_button).setOnClickListener(this);
     }
 
     @Override
@@ -66,6 +71,26 @@ public class ProcedureActivity extends AppCompatActivity
 
     }
 
+    // ボタン(固定)クリック時詳細処理
+//    @Override
+    public void onClick(View v) {
+
+        int id = v.getId();
+        Intent intent = null;
+/*
+        if (id == R.id.site_difference_button) {  // 現場差異ボタン
+            this.onClickSiteDiffButton(v);
+        } else if (id == R.id.return_button) {    // MENUへ戻るボタン
+*/
+        if (id == R.id.return_button) {    // MENUへ戻るボタン
+            intent = new Intent(this, TopActivity.class);
+
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+
+            startActivity(intent);
+        }
+    }
 
     @Override
     public void onListFragmentInteraction(Bundle rcBundle) {
@@ -121,13 +146,14 @@ public class ProcedureActivity extends AppCompatActivity
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
         if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
-            // 画面の着色と指示ボタンの無効化
-/*
-            Activity a = new ProcedureActivity();
-            a.setTheme(R.style.S01Button);
-            Resources res = getResources();
-            int lockColor = res.getColor(R.color.colorYellowButton);
-*/
+            // 画面全体の着色。ボタンの無効化はRecyclerViewAdapterで行う
+            Resources resources = getResources();
+            int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
+            View wrapProcedure = findViewById(R.id.WrapProcedure);
+            wrapProcedure.setBackgroundColor(instructDisplayColor);
+//            View procedureList = findViewById(R.id.prodcedure_list);
+//            procedureList.setBackgroundColor(instructDisplayColor);
+
         }
 
         // サーバーからの指示を待機
@@ -196,15 +222,17 @@ public class ProcedureActivity extends AppCompatActivity
         // コマンド送受信後の 次への処理判定
 
         if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の実際の処理
+            // 確認待機中の着色の解除
+            Resources resources = getResources();
+            int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+            View wrapProcedure = findViewById(R.id.WrapProcedure);
+            wrapProcedure.setBackgroundColor(instructDisplayColor);
+//            View procedureList = findViewById(R.id.prodcedure_list);
+//            procedureList.setBackgroundColor(instructDisplayColor);
+            // 次の手順に進める
             int position = mProcFragment.getCurrentPos();
             mProcFragment.setProcStatus(position, "7");
             mProcFragment.updateProcedure();
         }
-/*
-        int position = mProcFragment.getCurrentPos();
-        mProcFragment.setProcStatus(position, "7");
-        mProcFragment.updateProcedure();
-*/
     }
-
 }
