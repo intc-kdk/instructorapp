@@ -13,6 +13,7 @@
     <color name="colorBoardEquipmentText">#99ccff</color>
     <color name="colorInstructButton">#99ffff</color>
     <color name="colorDiffElement">@android:color/darker_gray</color>
+    <!--<color name="colorInstructXXX">発令中の画面色</color>-->
 
     <!--S-04 手順書画面(鈴木さんコード)-->
     <color name="colorTextBlack">#000000</color>

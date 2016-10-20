@@ -1,5 +1,6 @@
 package com.example.masterkdk.methodverification;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -87,6 +88,8 @@ public class ProcedureActivity extends AppCompatActivity
         // 指示ボタンタップ時の詳細処理
         System.out.println("CLICK!:"+item.tx_sno);
 
+
+
         // ヘッダへの値表示(No、盤・機器名、指示名)
         TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
         TextView tvPlace = (TextView) findViewById(R.id.title_proc_place);
@@ -118,12 +121,13 @@ public class ProcedureActivity extends AppCompatActivity
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
         if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
-            // 選択行の着色と指示ボタンの無効化
+            // 画面の着色と指示ボタンの無効化
+/*
+            Activity a = new ProcedureActivity();
+            a.setTheme(R.style.S01Button);
             Resources res = getResources();
             int lockColor = res.getColor(R.color.colorYellowButton);
-//        item.setBackgroundColor(lockColor);
-//        item.setEnabled(false);
-//            mProcFragment.setA
+*/
         }
 
         // サーバーからの指示を待機
@@ -137,62 +141,21 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     /* 要求受信 */
+    private String recievedCmd = "";  // コマンド受渡用変数
     @Override
     public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
-        //System.out.println("ReqRecieved:"+data);
+        System.out.println("ReqRecieved:"+data);
+
         DataStructureUtil dsHelper = new DataStructureUtil();
-
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
-//        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
 
-        if(cmd.equals("55")) { // 確認者タブレットで確認されたことを通知
+        if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
+            // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
             System.out.println("CLICK!:" + data);
-//            mProcFragment.updateProcedure();  // エラー発生
+            recievedCmd = cmd;
         }
-/*
-        if(cmd.equals("63")) { //指示命令
-            if (bdRecievedData.getString("format").equals("TEXT")) {
-                // 操作対象を取得
-                List<ProcItem> item = mProcFragment.getCurrentProcedure();
 
-                Bundle bdCur = new Bundle();
-
-                bdCur.putInt("in_sno", item.get(0).in_sno);
-                bdCur.putString("tx_sno", item.get(0).tx_sno);
-                bdCur.putString("tx_s_l", item.get(0).tx_s_l);
-                bdCur.putString("tx_action", item.get(0).tx_action);
-                bdCur.putString("tx_b_l", item.get(0).tx_b_l);
-                bdCur.putString("tx_b_r", item.get(0).tx_b_r);
-                bdCur.putString("tx_clr1", item.get(0).tx_clr1);
-                bdCur.putString("tx_clr2", item.get(0).tx_clr2);
-                bdCur.putString("tx_biko", item.get(0).tx_biko);
-                bdCur.putString("cd_status", item.get(0).cd_status);
-
-                Bundle bdPair = new Bundle();
-
-                bdPair.putInt("in_sno", item.get(1).in_sno);
-                bdPair.putString("tx_sno", item.get(1).tx_sno);
-                bdPair.putString("tx_s_l", item.get(1).tx_s_l);
-                bdPair.putString("tx_action", item.get(1).tx_action);
-                bdPair.putString("tx_b_l", item.get(1).tx_b_l);
-                bdPair.putString("tx_b_r", item.get(1).tx_b_r);
-                bdPair.putString("tx_clr1", item.get(1).tx_clr1);
-                bdPair.putString("tx_clr2", item.get(1).tx_clr2);
-                bdPair.putString("cd_status", item.get(1).cd_status);
-
-
-                //Intent生成
-                Intent intent = new Intent(this, OperationActivity.class);
-
-                intent.putExtra("current", bdCur);
-                intent.putExtra("pair", bdPair);
-
-                //盤操作画面を起動
-                startActivityForResult(intent, REQUEST_CODE_OPERATION);
-            }
-        }
-*/
         return "";
     }
 
@@ -231,6 +194,17 @@ public class ProcedureActivity extends AppCompatActivity
     @Override
     public void onFinishRecieveProgress() {
         // コマンド送受信後の 次への処理判定
+
+        if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の実際の処理
+            int position = mProcFragment.getCurrentPos();
+            mProcFragment.setProcStatus(position, "7");
+            mProcFragment.updateProcedure();
+        }
+/*
+        int position = mProcFragment.getCurrentPos();
+        mProcFragment.setProcStatus(position, "7");
+        mProcFragment.updateProcedure();
+*/
     }
 
 }

@@ -108,7 +108,11 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
         public void onClick(View view){
 
-            mAdapter.onButtonClick(mView, getAdapterPosition());
+            // 対象の操作の時のみ、Activityへ通知
+            int position = getAdapterPosition();
+            if(mValues.get(position).cd_status.equals("1")) {
+                mAdapter.onButtonClick(mView, getAdapterPosition());
+            }
         }
         @Override
         public String toString() {
@@ -137,9 +141,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色
 //            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色
             int txtColor= res.getColor(R.color.colorTextBlack);
-/*            if(data.cd_status.equals("1")){   // 実行中の時　←初期状態で行の着色はしない
+            if(data.cd_status.equals("1")){   // 実行中の時
                 bgColor = res.getColor(R.color.colorYellowButton);
-            }*/
+            }
             if(data.cd_status.equals("7")){   // 実行終了の時
                 btnColor = getColorInt(data.tx_clr2);
                 bgPlaceColor= res.getColor(R.color.colorBoardEquipmentDoneText);
@@ -162,6 +166,11 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                         // Notify the active callbacks interface (the activity, if the
                         // fragment is attached to one) that an item has been selected.
                         //mListener.onListFragmentInteraction(data);
+/*
+                        Resources res = mView.getResources();
+                        int bgColor = res.getColor(R.color.colorYellowButton);
+                        v.setBackgroundColor(bgColor);
+*/
                     }
                 }
             });
