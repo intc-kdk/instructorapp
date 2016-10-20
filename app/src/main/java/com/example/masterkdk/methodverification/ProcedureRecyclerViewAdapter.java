@@ -111,7 +111,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
 
         public void onClick(View view){
 
-            // 対象の操作の時のみ、Activityへ通知。タップ制限の実装は暫定
+            // 対象の操作の時のみ、Activityへ通知。指示ボタンのタップは一度のみ
             int position = getAdapterPosition();
             if(mValues.get(position).cd_status.equals("1") && noTap) {
                 noTap = false;
