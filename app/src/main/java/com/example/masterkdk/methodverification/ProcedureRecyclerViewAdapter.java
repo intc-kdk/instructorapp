@@ -141,7 +141,8 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             this.mOperationView.setText(data.tx_action);
 
             Resources res = this.mView.getResources();
-            int bgColor = res.getColor(R.color.colorBackGround);   // 行の背景色
+//            int bgColor = res.getColor(R.color.colorBackGround);   // 行の背景色
+            int bgColor = Color.parseColor("#00000000");   // 行の背景色
             int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色
             int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色
 //            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色

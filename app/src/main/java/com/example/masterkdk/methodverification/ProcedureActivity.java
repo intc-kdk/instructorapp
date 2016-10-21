@@ -113,7 +113,10 @@ public class ProcedureActivity extends AppCompatActivity
         // 指示ボタンタップ時の詳細処理
         System.out.println("CLICK!:"+item.tx_sno);
 
-
+        Resources resources = getResources();
+        int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
+        View wrapProcedure = findViewById(R.id.WrapProcedure);
+        wrapProcedure.setBackgroundColor(instructDisplayColor);
 
         // ヘッダへの値表示(No、盤・機器名、指示名)
         TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
@@ -129,8 +132,6 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.tx_sno + "\"}");
         sendFragment.send(data);
-
-//        item.
     }
 
     private void setProcActivate(){
@@ -147,13 +148,12 @@ public class ProcedureActivity extends AppCompatActivity
 
         if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
             // 画面全体の着色。ボタンの無効化はRecyclerViewAdapterで行う
+/*
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
             View wrapProcedure = findViewById(R.id.WrapProcedure);
             wrapProcedure.setBackgroundColor(instructDisplayColor);
-//            View procedureList = findViewById(R.id.prodcedure_list);
-//            procedureList.setBackgroundColor(instructDisplayColor);
-
+*/
         }
 
         // サーバーからの指示を待機
@@ -227,12 +227,20 @@ public class ProcedureActivity extends AppCompatActivity
             int instructDisplayColor = resources.getColor(R.color.colorBackGround);
             View wrapProcedure = findViewById(R.id.WrapProcedure);
             wrapProcedure.setBackgroundColor(instructDisplayColor);
-//            View procedureList = findViewById(R.id.prodcedure_list);
-//            procedureList.setBackgroundColor(instructDisplayColor);
-            // 次の手順に進める
+
             int position = mProcFragment.getCurrentPos();
-            mProcFragment.setProcStatus(position, "7");
-            mProcFragment.updateProcedure();
+            int lastInSno = mProcFragment.getLastInSno();
+//            if(mProcFragment.getLastInSno() > position) {
+//            if(mProcFragment.getLastInSno() > position + 1) {
+            if(lastInSno > position + 1) {
+                mProcFragment.setProcStatus(position, "7");
+                mProcFragment.updateProcedure();
+            }
+
+            // 次の手順に進める
+//            int position = mProcFragment.getCurrentPos();
+//            mProcFragment.setProcStatus(position, "7");
+//            mProcFragment.updateProcedure();
         }
     }
 }

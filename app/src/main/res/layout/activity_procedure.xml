@@ -108,7 +108,6 @@
         </FrameLayout>
 
         <FrameLayout
-            android:background="@color/colorBackGround"
             android:id="@+id/LoadProcedure"
             android:paddingTop="20dp"
             android:layout_marginLeft="50dp"
