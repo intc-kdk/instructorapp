@@ -44,7 +44,7 @@ public class DataStructureUtil {
         Matcher m = p.matcher(d);
         String cmd ="";
 
-        if(m.find()){
+        if(m.find()==true){
             this.mRecievedCmd=m.group(1);
             this.mRecievedData=m.group(2);
             cmd = mRecievedCmd;

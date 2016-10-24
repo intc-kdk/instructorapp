@@ -175,14 +175,15 @@ public class ProcedureActivity extends AppCompatActivity
 
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
-
+        String mData ="";
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
             // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
             System.out.println("CLICK!:" + data);
             recievedCmd = cmd;
+            mData = dsHelper.makeSendData("50","");
         }
 
-        return "";
+        return mData;
     }
 
     @Override
