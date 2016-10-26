@@ -12,14 +12,13 @@ import android.widget.TextView;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil.ProcItem;
 
-import java.util.List;
+//import java.util.List;
 /*
  *  K-02 手順書画面
 */
 
 public class ProcedureActivity extends AppCompatActivity
         implements TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener,
-//        ProcedureFragment.OnListFragmentInteractionListener{
         ProcedureFragment.OnListFragmentInteractionListener, View.OnClickListener {
 
     private static final String TAG_TRANS = "No_UI_Fragment1";
@@ -72,7 +71,7 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     // ボタン(固定)クリック時詳細処理
-//    @Override
+    @Override
     public void onClick(View v) {
 
         int id = v.getId();
@@ -113,11 +112,6 @@ public class ProcedureActivity extends AppCompatActivity
         // 指示ボタンタップ時の詳細処理
         System.out.println("CLICK!:"+item.tx_sno);
 
-        Resources resources = getResources();
-        int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
-        View wrapProcedure = findViewById(R.id.WrapProcedure);
-        wrapProcedure.setBackgroundColor(instructDisplayColor);
-
         // ヘッダへの値表示(No、盤・機器名、指示名)
         TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
         TextView tvPlace = (TextView) findViewById(R.id.title_proc_place);
@@ -130,7 +124,7 @@ public class ProcedureActivity extends AppCompatActivity
 
         // コマンド送信
         DataStructureUtil dsHelper = new DataStructureUtil();
-        String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.tx_sno + "\"}");
+        String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.in_sno + "\"}");
         sendFragment.send(data);
     }
 
@@ -147,13 +141,12 @@ public class ProcedureActivity extends AppCompatActivity
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
         if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
-            // 画面全体の着色。ボタンの無効化はRecyclerViewAdapterで行う
-/*
+            // 画面全体の着色
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
             View wrapProcedure = findViewById(R.id.WrapProcedure);
             wrapProcedure.setBackgroundColor(instructDisplayColor);
-*/
+            // ボタンの無効化はRecyclerViewAdapterで行う
         }
 
         // サーバーからの指示を待機
@@ -167,7 +160,8 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     /* 要求受信 */
-    private String recievedCmd = "";  // コマンド受渡用変数
+    private String recievedCmd = "";    // コマンド受渡変数
+    private Bundle recievedParam = null;  // パラメータ受渡変数
     @Override
     public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
@@ -180,44 +174,13 @@ public class ProcedureActivity extends AppCompatActivity
             // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
             System.out.println("CLICK!:" + data);
             recievedCmd = cmd;
+            recievedParam = dsHelper.getRecievedData();
             mData = dsHelper.makeSendData("50","");
         }
 
         return mData;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        // 盤操作画面からの戻り
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode != RESULT_OK) return;
-        Bundle resultBundle = data.getExtras();
-
-        if(!resultBundle.containsKey("in_sno")) return;
-        String status = resultBundle.getString("status");
-        int in_sno = resultBundle.getInt("in_sno");
-
-        if(requestCode == REQUEST_CODE_OPERATION) {
-            // 該当操作のステータスを更新
-            int position = mProcFragment.getCurrentPos();
-
-            mProcFragment.setProcStatus(position, status);   // 対象のエントリの更新
-
-            if(mProcFragment.getLastInSno() > in_sno) {
-                mProcFragment.updateProcedure();                 // 次のエントリへ進める
-
-                // サーバーからの指示を待機
-                recieveFragment.listen();
-            }else{
-                // 最終手順の時、終了画面表示
-                Intent intent = new Intent(this,EndActivity.class);
-                startActivity(intent);
-
-            }
-
-        }
-    }
     @Override
     public void onFinishRecieveProgress() {
         // コマンド送受信後の 次への処理判定
@@ -229,19 +192,23 @@ public class ProcedureActivity extends AppCompatActivity
             View wrapProcedure = findViewById(R.id.WrapProcedure);
             wrapProcedure.setBackgroundColor(instructDisplayColor);
 
+            // 手順の表示を更新
+//            String date = recievedParam.getString("ts_b");
+//            String[] arrDate = date.split(" ");
             int position = mProcFragment.getCurrentPos();
+//            mProcFragment.setProcStatus(position, "7", arrDate[1]);
             int lastInSno = mProcFragment.getLastInSno();
-//            if(mProcFragment.getLastInSno() > position) {
-//            if(mProcFragment.getLastInSno() > position + 1) {
-            if(lastInSno > position + 1) {
-                mProcFragment.setProcStatus(position, "7");
-                mProcFragment.updateProcedure();
-            }
 
-            // 次の手順に進める
-//            int position = mProcFragment.getCurrentPos();
-//            mProcFragment.setProcStatus(position, "7");
-//            mProcFragment.updateProcedure();
+            String[] arrDate = recievedParam.getString("ts_b").split(" ");
+            mProcFragment.setProcStatus(position, "7", arrDate[1]);
+
+            if(lastInSno > position + 1) {
+                mProcFragment.updateProcedure();  // 手順を進める
+                recieveFragment.listen();  // サーバーからの指示を待機
+            } else {
+                // 最後の手順の場合、手順を進めずに表示のみ更新
+                mProcFragment.updateLastProcedure();
+            }
         }
     }
 }

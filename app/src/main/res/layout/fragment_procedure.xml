@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <TextView
@@ -14,7 +14,9 @@
         tools:text="1"
         android:gravity="center_vertical|center"
         android:textSize="25sp"
-        android:layout_width="50dp" />
+        android:layout_width="50dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp" />
 
     <TextView
         android:id="@+id/proc_place"
@@ -25,7 +27,9 @@
         android:gravity="center_vertical|center"
         android:text="1111111111111111111111111111111111111111111111111111"
         android:textSize="25sp"
-        android:layout_width="350dp" />
+        android:layout_width="350dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp" />
 
     <TextView
         android:layout_height="match_parent"
@@ -37,7 +41,9 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:layout_width="175dp"
-        android:textColor="@android:color/black" />
+        android:textColor="@color/colorTextBlack"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp" />
 
     <TextView
         android:layout_width="125dp"
@@ -47,5 +53,8 @@
         android:layout_margin="5dp"
         android:gravity="center_vertical"
         android:textAlignment="center"
-        android:textSize="12sp" />
+        android:textSize="25sp"
+        android:textColor="@color/colorTextBlack"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp" />
 </LinearLayout>

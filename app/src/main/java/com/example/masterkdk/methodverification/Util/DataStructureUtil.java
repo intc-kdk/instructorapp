@@ -207,7 +207,8 @@ public class DataStructureUtil {
         public final String tx_b_r;
         public final String tx_clr1;
         public final String tx_clr2;
-        public final String ts_b;
+        public String ts_b;
+//        public final String ts_b;
         public String cd_status;
         public final String bo_gs;
 
