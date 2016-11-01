@@ -7,11 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-//import com.example.masterkdk.methodverification.TransmissionFragment;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
-//import com.example.masterkdk.methodverification.loader.SendRequestLoader;
-
-import static java.lang.Thread.sleep;
 
 
 /**
@@ -19,12 +15,8 @@ import static java.lang.Thread.sleep;
  * S-03 確認画面
  */
 
-//public class ConfirmActivity extends AppCompatActivity implements View.OnClickListener {
 public class ConfirmActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
 
-    private static final String HOST = "192.168.10.20";
-//    private static final int PORT = 1280;  // ポート(実環境)
-    private static final int PORT = 1234;  // ポート(VisualStudio)
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
     @Override
@@ -43,7 +35,6 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
         if (id == R.id.ok_button) {
 
             // Fragmentを利用した通信の準備
-//            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
             TransmissionFragment sendFragment = TransmissionFragment.newInstance();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -51,13 +42,12 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
             transaction.commit();
             fragmentManager.executePendingTransactions();   // 即時実行
 
-            // コマンド送信
-//            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+            // OKコマンド送信
             DataStructureUtil dataStructureHelper = new DataStructureUtil();
             String data = dataStructureHelper.makeSendData("17","");
             sendFragment.send(data);
 /*
-            // デバッグの為の仮の遷移
+            // デバッグ用の仮遷移処理
             Intent intent = new Intent(this, ProcedureActivity.class);
             Intent pI = getIntent();
             intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
@@ -72,7 +62,6 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
 
         System.out.println("ResRecieved");
 
-//        DataStructureHelper dsHelper = new DataStructureHelper();
         DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
@@ -91,6 +80,6 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
 
     @Override
     public void onFinishTransmission(String data){
-        // 実装する処理はないが、インターフェイス利用の為にオーバーライドが必要
+        // インターフェイス利用に必要なオーバーライド
     }
 }

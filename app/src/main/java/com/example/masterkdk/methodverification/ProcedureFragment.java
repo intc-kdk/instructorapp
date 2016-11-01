@@ -128,7 +128,6 @@ public class ProcedureFragment extends Fragment {
         }
         mCurrentPos = pos;
 
-//        setProcStatus(mCurrentPos, "1");
         setProcStatus(mCurrentPos, "1", "");
     }
 
@@ -197,6 +196,11 @@ public class ProcedureFragment extends Fragment {
         //  in_sno でソート
         Collections.sort(arrProc, new ProcedureComparator());
         return arrProc;
+    }
+    public int getCurrentInSno() {
+        // システム用の手順書番号in_snoを取得。activityでonListItemClickイベント以外でも取得できる
+        ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
+        return data.in_sno;
     }
 
     /**

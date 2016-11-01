@@ -6,7 +6,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
@@ -23,7 +27,6 @@ public class ProcedureActivity extends AppCompatActivity
 
     private static final String TAG_TRANS = "No_UI_Fragment1";
     private static final String TAG_RECEP = "No_UI_Fragment2";
-    private static final int REQUEST_CODE_OPERATION = 1;
 
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
@@ -61,7 +64,7 @@ public class ProcedureActivity extends AppCompatActivity
 
         // ボタン(固定)へリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
-//        findViewById(R.id.site_difference_button).setOnClickListener(this);
+        findViewById(R.id.site_difference_button).setOnClickListener(this);
     }
 
     @Override
@@ -76,12 +79,10 @@ public class ProcedureActivity extends AppCompatActivity
 
         int id = v.getId();
         Intent intent = null;
-/*
+
         if (id == R.id.site_difference_button) {  // 現場差異ボタン
             this.onClickSiteDiffButton(v);
         } else if (id == R.id.return_button) {    // MENUへ戻るボタン
-*/
-        if (id == R.id.return_button) {    // MENUへ戻るボタン
             intent = new Intent(this, TopActivity.class);
 
             Intent pI = getIntent();
@@ -89,6 +90,78 @@ public class ProcedureActivity extends AppCompatActivity
 
             startActivity(intent);
         }
+    }
+
+    // ポップアップの初期化
+    private PopupWindow mPopupWindow;
+
+    public void onClickSiteDiffButton(View v) {
+
+        mPopupWindow = new PopupWindow(ProcedureActivity.this);
+
+        // レイアウト設定
+        View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+
+        // ボタン設定  TODO:現場差異は指示の有無に関わらず可能にする
+        final DataStructureUtil dsHelper = new DataStructureUtil();
+        final String currentInSno = Integer.toString(mProcFragment.getCurrentInSno());
+//        final String currentPos = Integer.toString(mProcFragment.getCurrentPos() + 1 );  // getCurrentPos()の初期値なので+1
+        popupView.findViewById(R.id.procedure_skip_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {  // この手順をスキップする
+//                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + mProcFragment.getCurrentPos() + "\",\"Com\":\"1\"}");
+                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"1\"}");
+                sendFragment.send(data);
+            }
+        });
+        popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {  // この手順の前に操作を追加する  TODO:検証未実施
+//                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + mProcFragment.getCurrentPos() + "\",\"Com\":\"2\"}");
+                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"2\"}");
+                sendFragment.send(data);
+            }
+        });
+        popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPopupWindow.isShowing()) {  // キャンセル
+                    mPopupWindow.dismiss();
+                }
+            }
+        });
+
+        mPopupWindow.setContentView(popupView);
+
+        // 背景設定
+        mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_background));
+
+        // タップ時に他のViewでキャッチされないための設定
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.setFocusable(true);
+
+        // 表示サイズの設定 今回は幅450dp
+        float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 450, getResources().getDisplayMetrics());
+        mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
+        mPopupWindow.setWidth((int) width);
+        mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+
+        // 現場差異ボタンの行に表示
+        mPopupWindow.showAtLocation(findViewById(R.id.site_difference_button), Gravity.NO_GRAVITY, 300, 250);
+
+        // 手順書画面フッタにメッセージを表示
+        final TextView siteDifferenceText = (TextView) findViewById(R.id.site_diff_text);
+        String siteDifferenceTextString = getString(R.string.S_05_site_difference_text);
+        siteDifferenceText.setText(siteDifferenceTextString);
+
+        // ポップアップ削除時は、手順書画面フッタのメッセージも削除
+        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                // キャンセルボタンだけでなく、ポップアップ外タップ時にも対応
+                siteDifferenceText.setText("");
+            }
+        });
     }
 
     @Override
@@ -110,7 +183,7 @@ public class ProcedureActivity extends AppCompatActivity
     public void onListItemClick(ProcItem item){
 
         // 指示ボタンタップ時の詳細処理
-        System.out.println("CLICK!:"+item.tx_sno);
+        System.out.println("CLICK!:"+item.in_sno);
 
         // ヘッダへの値表示(No、盤・機器名、指示名)
         TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
@@ -127,10 +200,10 @@ public class ProcedureActivity extends AppCompatActivity
         String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.in_sno + "\"}");
         sendFragment.send(data);
     }
-
+/*
     private void setProcActivate(){
     }
-
+*/
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
@@ -170,12 +243,18 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         String mData ="";
+
+        // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
-            // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
             System.out.println("CLICK!:" + data);
             recievedCmd = cmd;
             recievedParam = dsHelper.getRecievedData();
-            mData = dsHelper.makeSendData("50","");
+            mData = dsHelper.makeSendData("50", "");
+//            sendFragment.send(data);  // 50返してるか念の為確認
+//        }
+        } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
+            recievedCmd = cmd;
+            mData = dsHelper.makeSendData("50", "");
         }
 
         return mData;
@@ -185,7 +264,7 @@ public class ProcedureActivity extends AppCompatActivity
     public void onFinishRecieveProgress() {
         // コマンド送受信後の 次への処理判定
 
-        if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の実際の処理
+        if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の描画処理
             // 確認待機中の着色の解除
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorBackGround);
@@ -193,22 +272,27 @@ public class ProcedureActivity extends AppCompatActivity
             wrapProcedure.setBackgroundColor(instructDisplayColor);
 
             // 手順の表示を更新
-//            String date = recievedParam.getString("ts_b");
-//            String[] arrDate = date.split(" ");
             int position = mProcFragment.getCurrentPos();
-//            mProcFragment.setProcStatus(position, "7", arrDate[1]);
             int lastInSno = mProcFragment.getLastInSno();
-
+            int currentInSno = mProcFragment.getCurrentInSno();
             String[] arrDate = recievedParam.getString("ts_b").split(" ");
             mProcFragment.setProcStatus(position, "7", arrDate[1]);
 
-            if(lastInSno > position + 1) {
-                mProcFragment.updateProcedure();  // 手順を進める
+//            if (lastInSno > position + 1) {
+            if (lastInSno != currentInSno) {
+                // 手順を進める
+                mProcFragment.updateProcedure();
                 recieveFragment.listen();  // サーバーからの指示を待機
             } else {
                 // 最後の手順の場合、手順を進めずに表示のみ更新
                 mProcFragment.updateLastProcedure();
             }
+//        }
+        } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
+            // 手順の表示を更新
+            mPopupWindow.dismiss();
+
+            // TODO:手順の表示を更新
         }
     }
 }

@@ -32,13 +32,13 @@
                 android:text="現場差異"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/button5"
+                android:id="@+id/site_difference_button"
                 android:layout_gravity="right"
                 android:textSize="30sp"
                 android:width="70dp"
                 android:height="80dp"
-                android:textColor="#cccccc"
-                android:background="@drawable/bg_diff_off"
+                android:textColor="@android:color/black"
+                android:background="@drawable/bg_diff_on"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:paddingLeft="10dp"
@@ -130,16 +130,15 @@
 
             <Button
                 android:text="@string/S_04_return"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/return_button"
-                style="@style/S04ButtonBackMenu"
-                android:layout_weight="0.13" />
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:textSize="20sp"
+                android:id="@+id/return_button" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView8"
+                android:id="@+id/site_diff_text"
                 android:layout_weight="1"
                 android:background="@color/colorText"
                 android:height="100dp"
@@ -150,6 +149,7 @@
                 android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />
+
         </LinearLayout>
     </LinearLayout>
 

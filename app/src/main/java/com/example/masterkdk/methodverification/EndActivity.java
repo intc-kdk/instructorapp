@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-//import com.example.masterkdk.methodverification.Util.DataStructureHelper;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 
 /**
@@ -15,12 +14,11 @@ import com.example.masterkdk.methodverification.Util.DataStructureUtil;
  * S-06 終了方法選択画面
  */
 
-//public class EndActivity extends AppCompatActivity implements View.OnClickListener {
 public class EndActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
 
-    private static final String HOST = "192.168.10.20";
+//    private static final String HOST = "192.168.10.20";
 //    private static final int PORT = 1280;  // ポート(実環境)
-    private static final int PORT = 1234;  // ポート(VisualStudio)
+//    private static final int PORT = 1234;  // ポート(VisualStudio)
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
     @Override
@@ -30,7 +28,6 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
 
         // ボタンへリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
-//        findViewById(R.id.two_end_button).setOnClickListener(this);
         findViewById(R.id.all_end_button).setOnClickListener(this);
     }
 
@@ -46,12 +43,11 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
 
             startActivity(intent);
-//        } else {
+
         } else if (id == R.id.all_end_button) {
             // 全てのタブレットを終了する
 
             // Fragmentを利用した通信の準備
-//            TransmissionFragment sendFragment = TransmissionFragment.newInstance(HOST,PORT);
             TransmissionFragment sendFragment = TransmissionFragment.newInstance();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -59,8 +55,7 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             transaction.commit();
             fragmentManager.executePendingTransactions();   // 即時実行
 
-            // コマンド送信
-//            DataStructureHelper dataStructureHelper = new DataStructureHelper();
+            // 終了コマンド送信
             DataStructureUtil dataStructureHelper = new DataStructureUtil();
             String data = dataStructureHelper.makeSendData("16","");
             sendFragment.send(data);
@@ -73,9 +68,7 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
 
         System.out.println("ResRecieved");
 
-//        DataStructureHelper dsHelper = new DataStructureHelper();
         DataStructureUtil dsHelper = new DataStructureUtil();
-
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         System.out.println("Command：" + cmd);
 
