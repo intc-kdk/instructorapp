@@ -4,13 +4,17 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
@@ -81,7 +85,16 @@ public class ProcedureActivity extends AppCompatActivity
         Intent intent = null;
 
         if (id == R.id.site_difference_button) {  // 現場差異ボタン
+
+            // 表示切替
+            Drawable backgroundPicture = getResources().getDrawable(R.drawable.bg_diff_off);
+            v.setBackground(backgroundPicture);
+            Button btn = (Button) v;
+            Resources res = getResources();
+            btn.setTextColor(res.getColor(R.color.colorTextLightGray));
+
             this.onClickSiteDiffButton(v);
+
         } else if (id == R.id.return_button) {    // MENUへ戻るボタン
             intent = new Intent(this, TopActivity.class);
 
@@ -94,6 +107,7 @@ public class ProcedureActivity extends AppCompatActivity
 
     // ポップアップの初期化
     private PopupWindow mPopupWindow;
+    private int diffFlag;
 
     public void onClickSiteDiffButton(View v) {
 
@@ -109,15 +123,20 @@ public class ProcedureActivity extends AppCompatActivity
         popupView.findViewById(R.id.procedure_skip_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // この手順をスキップする
-//                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + mProcFragment.getCurrentPos() + "\",\"Com\":\"1\"}");
-                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"1\"}");
+                int colorNum = getResources().getColor(R.color.colorGrayButton);
+                v.setBackgroundColor(colorNum);
+                diffFlag = 1;
+                String commandString = "{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"" + diffFlag + "\"}";
+                String data = dsHelper.makeSendData("14", commandString);
+//                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"1\"}");
                 sendFragment.send(data);
             }
         });
         popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {  // この手順の前に操作を追加する  TODO:検証未実施
-//                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + mProcFragment.getCurrentPos() + "\",\"Com\":\"2\"}");
+            public void onClick(View v) {  // この手順の前に操作を追加する
+                int colorNum = getResources().getColor(R.color.colorGrayButton);
+                v.setBackgroundColor(colorNum);
                 String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"2\"}");
                 sendFragment.send(data);
             }
@@ -159,7 +178,15 @@ public class ProcedureActivity extends AppCompatActivity
             @Override
             public void onDismiss() {
                 // キャンセルボタンだけでなく、ポップアップ外タップ時にも対応
-                siteDifferenceText.setText("");
+
+                // ボタン表示切替
+                Button siteDiffButton = (Button) findViewById(R.id.site_difference_button);
+                Drawable backgroundPicture = getResources().getDrawable(R.drawable.bg_diff_on);
+                siteDiffButton.setBackground(backgroundPicture);
+                Resources res = getResources();
+                siteDiffButton.setTextColor(res.getColor(R.color.colorTextBlack));
+
+                siteDifferenceText.setText("");  // フッタ文言削除
             }
         });
     }
@@ -246,16 +273,18 @@ public class ProcedureActivity extends AppCompatActivity
 
         // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
+
             System.out.println("CLICK!:" + data);
             recievedCmd = cmd;
             recievedParam = dsHelper.getRecievedData();
             mData = dsHelper.makeSendData("50", "");
-//            sendFragment.send(data);  // 50返してるか念の為確認
-//        }
+
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
             recievedCmd = cmd;
             mData = dsHelper.makeSendData("50", "");
         }
+
+        sendFragment.send(mData);  // 明示的な応答
 
         return mData;
     }
@@ -289,10 +318,30 @@ public class ProcedureActivity extends AppCompatActivity
             }
 //        }
         } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
-            // 手順の表示を更新
+
+            // ポップアップを閉じる
             mPopupWindow.dismiss();
 
             // TODO:手順の表示を更新
+            int position = mProcFragment.getCurrentPos();
+            String tx_gs="";
+            String status="";
+            // cd_status スキップは"7", 追加は "0"
+            if(diffFlag == 1){
+                status="7";
+                tx_gs="スキップ";
+            }else if(diffFlag == 2){
+                status="0";
+                tx_gs="追加";
+            }
+//            mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
+            // TODO: 最終エントリの判定要
+
+            if(diffFlag == 1) {  // SKIP
+                mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
+            }else{
+//                mProcFragment.addProcedure();   // 追加はそのままの手順
+            }
         }
     }
 }

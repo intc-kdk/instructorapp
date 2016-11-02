@@ -163,13 +163,13 @@ public class MainActivity extends AppCompatActivity
 
                     tableProcedure.addView(addRow);
                 }
-
-                // 行レイアウトの追加
-//            for (int i=0; i < 3; i++) {
-//                // 行を追加
-//                getLayoutInflater().inflate(R.layout.location_row, tableProcedure);
-//            }
-
+/*
+            // 行レイアウトの追加
+            for (int i=0; i < 3; i++) {
+                // 行を追加
+                getLayoutInflater().inflate(R.layout.location_row, tableProcedure);
+            }
+*/
 //            ViewGroup.LayoutParams lp = tableProcedure.getLayoutParams();
 //            lp.width = 790;
 //            lp.width = "";

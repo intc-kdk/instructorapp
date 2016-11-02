@@ -209,8 +209,8 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
     }
 
-//    public void setActivate(int position, String status){
     public void setActivate(int position, String status, String ts_b){
+//    public void setActivate(int position, String status, String ts_b, String bo_gs, String tx_gs){
         // 該当の手順の状態を更新する
 
         mValues.get(position).cd_status = status;

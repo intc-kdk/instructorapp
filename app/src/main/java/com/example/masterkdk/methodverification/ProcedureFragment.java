@@ -129,6 +129,7 @@ public class ProcedureFragment extends Fragment {
         mCurrentPos = pos;
 
         setProcStatus(mCurrentPos, "1", "");
+//        setProcStatus(mCurrentPos, "1", "","False","");
     }
 
     private int getLastPorcedure(){
@@ -144,11 +145,12 @@ public class ProcedureFragment extends Fragment {
         return reverse.get(pos).in_sno;
     }
 
-//    public void setProcStatus(int pos, String status){
     public void setProcStatus(int pos, String status, String ts_b){
+//    public void setProcStatus(int pos, String status, String ts_b, String bo_gs, String tx_gs){
+
         // ヘッダーに表示するため、対象の指示をActivityへ通知
-//        mRecyclerViewAdapter.setActivate(pos,status);
         mRecyclerViewAdapter.setActivate(pos, status, ts_b);
+//        mRecyclerViewAdapter.setActivate(pos, status, ts_b, bo_gs, tx_gs);
         Bundle rcBundle = new Bundle();
         rcBundle.putString("tx_sno",mItems.get(pos).tx_sno);
         rcBundle.putString("tx_s_l",mItems.get(pos).tx_s_l);
@@ -172,8 +174,8 @@ public class ProcedureFragment extends Fragment {
         mItems.get(nextPos).cd_status="1";
 
         // 次の手順を Activityへ通知
-//        setProcStatus(nextPos, mItems.get(nextPos).cd_status);
         setProcStatus(nextPos, mItems.get(nextPos).cd_status, "");
+//        setProcStatus(nextPos, mItems.get(nextPos).cd_status, "","False","");
 
         // RecyclerViewを更新
         mCurrentPos=nextPos;
