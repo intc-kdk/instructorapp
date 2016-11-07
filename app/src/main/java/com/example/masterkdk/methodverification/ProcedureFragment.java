@@ -167,9 +167,11 @@ public class ProcedureFragment extends Fragment {
         // 次の手順へ進める
         int nextPos = mCurrentPos + 1;
 
-        if(mItems.get(nextPos).tx_sno.equals("C")){
+        // コメント行を無視して、次の手順を取得する
+        while(mItems.get(nextPos).tx_sno.equals("C")){
             nextPos++;  // 次がコメントの時は一つ進める
         }
+
         // 対象の指示を更新
         mItems.get(nextPos).cd_status="1";
 
