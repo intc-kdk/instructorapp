@@ -250,7 +250,7 @@ public class ProcedureActivity extends AppCompatActivity
         }
 
         // サーバーからの指示を待機
-        recieveFragment.listen();
+        //recieveFragment.listen();
     }
 
     @Override

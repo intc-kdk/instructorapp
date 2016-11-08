@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
 
+    private String nextActivity = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,34 +64,33 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v){
 
-        // Activity遷移前にrecieveFragment停止
-        sendFragment.halt("99@$");
-        recieveFragment.closeServer();
-
         int id = v.getId();
-        Intent intent = null;
+        //Intent intent = null;
         if (id == R.id.menu_button) {
 
-            intent = new Intent(this, TopActivity.class);
+            nextActivity="top";
+            /*intent = new Intent(this, TopActivity.class);
 
             intent.putExtra("resultStTmp", resultStTmp);
 
-            startActivity(intent);
+            startActivity(intent);*/
 
         } else if (id == R.id.start_button) {
-
-            intent = new Intent(this, ConfirmActivity.class);
+            nextActivity="conf";
+            /*intent = new Intent(this, ConfirmActivity.class);
 
             intent.putExtra("resultStTmp", resultStTmp);
 
-            startActivity(intent);
+            startActivity(intent);*/
         }
+        // Activity遷移前にrecieveFragment停止
+        sendFragment.halt("99@$");
+
     }
 
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
-
         System.out.println("CLICK!:" + data);
 
         DataStructureUtil dsHelper = new DataStructureUtil();
@@ -177,10 +177,21 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            recieveFragment.listen();
+            //recieveFragment.listen();
 //        }
-        } else if(cmd.equals("99")){ //待ち受けを中止する
+        } else if(cmd.equals("99")){
+            //待ち受けを中止する
             recieveFragment.closeServer();
+            // 次の画面へ遷移
+            Intent intent = null;
+            if(nextActivity.equals("top")){
+                intent = new Intent(this, TopActivity.class);
+            }else{
+                intent = new Intent(this, ConfirmActivity.class);
+            }
+            intent.putExtra("resultStTmp", resultStTmp);
+            startActivity(intent);
+
         }
 
         // サーバーからの指示を待機
@@ -212,8 +223,8 @@ public class MainActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50","");
 //        }
         } else if(cmd.equals("99")) {
+            recievedCmd =cmd;
             mData = dsHelper.makeSendData("99","");
-            recieveFragment.closeServer();
         }
 
         return mData;
@@ -224,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         // コマンド送受信後の 次への処理判定
 
         if(recievedCmd.equals("57")) { // 盤タブレット更新後の描画
-
+            System.out.println("57受信");
             // 設置状況テーブルの更新
             TableLayout tabletTable = (TableLayout) findViewById(R.id.table_tablet);
             int tabletTableRowNum = tabletTable.getChildCount();
@@ -261,6 +272,7 @@ public class MainActivity extends AppCompatActivity
             recieveFragment.listen();  // サーバーからの指示を待機
 //        }
         } else if(recievedCmd.equals("99")) { // accept キャンセル
+            System.out.println("99受信");
             // ここでは何もせず、応答の"99"受信で処理
         }
     }
