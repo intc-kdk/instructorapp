@@ -108,6 +108,7 @@ public class ProcedureActivity extends AppCompatActivity
     // ポップアップの初期化
     private PopupWindow mPopupWindow;
     private int diffFlag;
+    private boolean sendFlag = false;
 
     public void onClickSiteDiffButton(View v) {
 
@@ -116,10 +117,11 @@ public class ProcedureActivity extends AppCompatActivity
         // レイアウト設定
         View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
 
-        // ボタン設定  TODO:現場差異は指示の有無に関わらず可能にする
+        // ボタン設定
         final DataStructureUtil dsHelper = new DataStructureUtil();
         final String currentInSno = Integer.toString(mProcFragment.getCurrentInSno());
-//        final String currentPos = Integer.toString(mProcFragment.getCurrentPos() + 1 );  // getCurrentPos()の初期値なので+1
+        final String commandBasic = "{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"";
+//        final boolean sendFlag = false;
         popupView.findViewById(R.id.procedure_skip_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // この手順をスキップする
@@ -127,9 +129,12 @@ public class ProcedureActivity extends AppCompatActivity
                 v.setBackgroundColor(colorNum);
                 diffFlag = 1;
                 String commandString = "{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"" + diffFlag + "\"}";
+//                String commandString = commandBasic + "1\"}";
                 String data = dsHelper.makeSendData("14", commandString);
-//                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"1\"}");
                 sendFragment.send(data);
+
+//                sendFlag = true;
+//                popupView.findViewById(R.id.procedure_add_button).removeCallbacks();
             }
         });
         popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
@@ -138,6 +143,8 @@ public class ProcedureActivity extends AppCompatActivity
                 int colorNum = getResources().getColor(R.color.colorGrayButton);
                 v.setBackgroundColor(colorNum);
                 String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"2\"}");
+//                String commandString = commandBasic + "2\"}";
+//                String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
             }
         });
@@ -227,10 +234,7 @@ public class ProcedureActivity extends AppCompatActivity
         String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.in_sno + "\"}");
         sendFragment.send(data);
     }
-/*
-    private void setProcActivate(){
-    }
-*/
+
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
@@ -248,9 +252,6 @@ public class ProcedureActivity extends AppCompatActivity
             wrapProcedure.setBackgroundColor(instructDisplayColor);
             // ボタンの無効化はRecyclerViewAdapterで行う
         }
-
-        // サーバーからの指示を待機
-        //recieveFragment.listen();
     }
 
     @Override
@@ -283,8 +284,6 @@ public class ProcedureActivity extends AppCompatActivity
             recievedCmd = cmd;
             mData = dsHelper.makeSendData("50", "");
         }
-
-//        sendFragment.send(mData);  // 明示的な応答
 
         return mData;
     }

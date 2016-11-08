@@ -65,27 +65,16 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v){
 
         int id = v.getId();
-        //Intent intent = null;
+
+        // recieveFragment停止後にActivity遷移させる為、ここではActivity種別の指定のみ行う
         if (id == R.id.menu_button) {
-
             nextActivity="top";
-            /*intent = new Intent(this, TopActivity.class);
-
-            intent.putExtra("resultStTmp", resultStTmp);
-
-            startActivity(intent);*/
-
         } else if (id == R.id.start_button) {
             nextActivity="conf";
-            /*intent = new Intent(this, ConfirmActivity.class);
-
-            intent.putExtra("resultStTmp", resultStTmp);
-
-            startActivity(intent);*/
         }
+
         // Activity遷移前にrecieveFragment停止
         sendFragment.halt("99@$");
-
     }
 
     /* 応答受信 */
@@ -135,9 +124,7 @@ public class MainActivity extends AppCompatActivity
                 TableRow.LayoutParams commentColumnLayout = new TableRow.LayoutParams();
                 commentColumnLayout.setMargins(2, 2, 2, 2);
                 commentColumnLayout.span = columnNum;
-//            StringBuilder stringBuilder = null;
                 String tableItem = null;
-                int newLineTargetNum = 0;
                 // 行の追加
                 for (int i = 0; i < procedureArray.length(); i++) {
                     addRow = new TableRow(this);
@@ -150,18 +137,11 @@ public class MainActivity extends AppCompatActivity
                             innerText = procedureArray.getJSONObject(i).getString("tx_com");
                             addColumn = new TextView(this, null, R.attr.S01ProcedureTableCommentColumnDynamic);
                             addColumn.setText(innerText);
-
-//                        addColumn.setWidth(200);
-
                             addRow.addView(addColumn, commentColumnLayout);
                             break;
                         } else {
                             // 通常の行の追加
                             addColumn = new TextView(this, null, R.attr.S01ProcedureTableColumnDynamic);
-
-                            // テーブル幅の伸長を抑止する
-//                        addColumn.setWidth(150);  // 150は暫定値。これでTableLayoutの幅の"wrap_parent"を解除して数値指定で固定すればいける？？
-
                             addColumn.setText(innerText);
                             addRow.addView(addColumn, columnLayout);
                         }
@@ -177,10 +157,8 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            //recieveFragment.listen();
-//        }
         } else if(cmd.equals("99")){
-            //待ち受けを中止する
+            // 待ち受けを中止する
             recieveFragment.closeServer();
             // 次の画面へ遷移
             Intent intent = null;
@@ -191,11 +169,7 @@ public class MainActivity extends AppCompatActivity
             }
             intent.putExtra("resultStTmp", resultStTmp);
             startActivity(intent);
-
         }
-
-        // サーバーからの指示を待機
-//        recieveFragment.listen();
     }
 
     @Override
@@ -221,9 +195,9 @@ public class MainActivity extends AppCompatActivity
             recievedCmd = cmd;
             recievedParam = data.split("@")[1];
             mData = dsHelper.makeSendData("50","");
-//        }
+
         } else if(cmd.equals("99")) {
-            recievedCmd =cmd;
+            recievedCmd = cmd;
             mData = dsHelper.makeSendData("99","");
         }
 
@@ -270,7 +244,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             recieveFragment.listen();  // サーバーからの指示を待機
-//        }
+
         } else if(recievedCmd.equals("99")) { // accept キャンセル
             System.out.println("99受信");
             // ここでは何もせず、応答の"99"受信で処理

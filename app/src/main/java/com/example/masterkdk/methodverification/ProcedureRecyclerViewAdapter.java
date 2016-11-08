@@ -12,6 +12,8 @@ import com.example.masterkdk.methodverification.ProcedureFragment.OnListFragment
 import com.example.masterkdk.methodverification.Util.DataStructureUtil.ProcItem;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ProcItem} and makes a call to the
@@ -127,17 +129,32 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                     Integer.valueOf( code.substring( 3, 6 ), 16 ) );
             return color;
         }
-
-        private String getHhmm(String time){
-            //  HHMMのみ抽出
+        private String getRemarks(String tx_gs, String remark){
             String rc="";
-            if(time.length() > 0 ) {
-                String[] arrTime = time.split(":");
+
+            Pattern preP = Pattern.compile("^(\\d*):(\\d*):(\\d*)$");
+            Matcher preM = preP.matcher(remark);
+            Pattern reP = Pattern.compile("^(.*) (\\d*):(\\d*):(\\d*)$");
+            Matcher reM = reP.matcher(remark);
+            if(preM.find()) {
+                // 時刻フォーマットの時(初期表示)
+                String[] arrTime = remark.split(":");
                 rc = arrTime[0] + ":" + arrTime[1];
+            } else if(reM.find()) {
+                // 時刻フォーマットの時(再表示)
+                rc = reM.group(2) + ":" + reM.group(3);
+            } else {
+                rc = remark;
             }
+/*
+            if(tx_gs.equals("追加") && ! rc.equals("")){
+                rc = tx_gs + "\r\n" + rc;
+            } else {
+                rc = tx_gs + rc;
+            }
+*/
             return rc;
         }
-
         public void onBindItemViewHolder(final ProcItem data) {
 
             this.noTap = true;
@@ -145,8 +162,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             this.mNumberView.setText(data.tx_sno);
             this.mPlaceView.setText(data.tx_s_l);
             this.mOperationView.setText(data.tx_action);
-
-            this.mRemarksView.setText(getHhmm(data.ts_b));
+            this.mRemarksView.setText(getRemarks(data.tx_gs, data.ts_b));
 
             Resources res = this.mView.getResources();
             int bgColor = Color.parseColor("#00000000");   // 行の背景色
