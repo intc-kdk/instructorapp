@@ -284,7 +284,7 @@ public class ProcedureActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50", "");
         }
 
-        sendFragment.send(mData);  // 明示的な応答
+//        sendFragment.send(mData);  // 明示的な応答
 
         return mData;
     }

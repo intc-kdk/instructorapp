@@ -103,12 +103,15 @@ public class ReceptionFragment extends Fragment {
             @Override
             protected String doInBackground(Void... voids) {
                 String message = "";
+                Context context = getActivity();
                 try{
                     if(mServer == null) {
                         mServer = new ServerSocket();
-
                         mServer.setReuseAddress(true);
                         mServer.bind(new InetSocketAddress(mPort));
+System.out.println("☆☆☆ ソケット新規作成 ☆☆☆");
+                    }else{
+System.out.println("◆◆◆ ソケットリユース ◆◆◆");
                     }
                     mSocket = mServer.accept();
                     reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
@@ -124,6 +127,7 @@ public class ReceptionFragment extends Fragment {
                         }
                     }
                     message=builder.toString();
+                    AppLogRepository.create(context,"R",message);
                     System.out.println("<< サーバーから受信 >>"+message);
                     // Activity へ リクエストを返し、返信データ（response）を受け取る
                     response = ((ReceptionFragmentListener)getActivity()).onRequestRecieved(message);
@@ -131,23 +135,28 @@ public class ReceptionFragment extends Fragment {
                     if(response.equals("")) {
                         // データ未設定の時、コネクションクローズ
                         System.out.println("<< 一方送信のため終了 >>");
+                        writer.close();
                         reader.close();
                         mSocket.close();
                     }else{
                         // データが設定されているとき、レスポンス送信
                         writer.write(response);
                         writer.flush();
+                        AppLogRepository.create(context,"S",response);
                         System.out.println("<< サーバーへ送信 >>"+response);
+                        writer.close();
                         reader.close();
                         mSocket.close(); //
                     }
 
                 }catch (SocketException e){
+                    System.out.println("＝＝＝ accept() キャンセル ＝＝＝");
                     e.printStackTrace();
                 }catch(IOException e){
                     e.printStackTrace();
                 } finally {
                     try{
+                        writer.close();
                         reader.close();
                         mSocket.close();
                     } catch (IOException e) {
@@ -187,7 +196,9 @@ public class ReceptionFragment extends Fragment {
     public void closeServer(){
         if(mServer != null) {
             try {
+                System.out.println("＝＝＝ サーバークローズ ＝＝＝");
                 mServer.close();
+                mServer = null; // サーバーを破棄
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (IOException e) {

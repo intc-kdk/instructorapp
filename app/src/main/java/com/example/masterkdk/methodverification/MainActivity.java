@@ -62,15 +62,23 @@ public class MainActivity extends AppCompatActivity
     // ボタンクリック時詳細処理
     @Override
     public void onClick(View v){
+
+        // Activity遷移前にrecieveFragment停止
+        sendFragment.halt("99@$");
+        recieveFragment.closeServer();
+
         int id = v.getId();
         Intent intent = null;
         if (id == R.id.menu_button) {
+
             intent = new Intent(this, TopActivity.class);
 
             intent.putExtra("resultStTmp", resultStTmp);
 
             startActivity(intent);
+
         } else if (id == R.id.start_button) {
+
             intent = new Intent(this, ConfirmActivity.class);
 
             intent.putExtra("resultStTmp", resultStTmp);
@@ -159,33 +167,24 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-//                addRow.setMinimumWidth(100);
-
                     tableProcedure.addView(addRow);
                 }
-/*
-            // 行レイアウトの追加
-            for (int i=0; i < 3; i++) {
-                // 行を追加
-                getLayoutInflater().inflate(R.layout.location_row, tableProcedure);
-            }
-*/
-//            ViewGroup.LayoutParams lp = tableProcedure.getLayoutParams();
-//            lp.width = 790;
-//            lp.width = "";
-//                tableProcedure.setLayoutParams(lp);
 
                 // 手順書の保存
-//            this.resultStTmp = resultArr[1];
                 this.resultStTmp = data;
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            recieveFragment.listen();
+//        }
+        } else if(cmd.equals("99")){ //待ち受けを中止する
+            recieveFragment.closeServer();
         }
 
         // サーバーからの指示を待機
-        recieveFragment.listen();
+//        recieveFragment.listen();
     }
 
     @Override
@@ -211,6 +210,10 @@ public class MainActivity extends AppCompatActivity
             recievedCmd = cmd;
             recievedParam = data.split("@")[1];
             mData = dsHelper.makeSendData("50","");
+//        }
+        } else if(cmd.equals("99")) {
+            mData = dsHelper.makeSendData("99","");
+            recieveFragment.closeServer();
         }
 
         return mData;
@@ -256,6 +259,9 @@ public class MainActivity extends AppCompatActivity
             }
 
             recieveFragment.listen();  // サーバーからの指示を待機
+//        }
+        } else if(recievedCmd.equals("99")) { // accept キャンセル
+            // ここでは何もせず、応答の"99"受信で処理
         }
     }
 }
