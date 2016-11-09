@@ -283,9 +283,6 @@ public class ProcedureActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50", "");
         }
 
-        // サーバーからの指示を待機(期待しないコマンドも含め)
-        recieveFragment.listen();
-
         return mData;
     }
 
@@ -310,6 +307,7 @@ public class ProcedureActivity extends AppCompatActivity
             if (lastInSno != currentInSno) {
                 // 手順を進める
                 mProcFragment.updateProcedure();
+                recieveFragment.listen();  // サーバーからの指示を待機
             } else {
                 // 最後の手順の場合、手順を進めずに表示のみ更新
                 mProcFragment.updateLastProcedure();
@@ -340,6 +338,10 @@ public class ProcedureActivity extends AppCompatActivity
             }else{
 //                mProcFragment.addProcedure();   // 追加はそのままの手順
             }
+
+        } else {
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
         }
     }
 }
