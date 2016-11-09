@@ -108,7 +108,7 @@ public class ProcedureActivity extends AppCompatActivity
     // ポップアップの初期化
     private PopupWindow mPopupWindow;
     private int diffFlag;
-    private boolean sendFlag = false;
+    private boolean sendFlag = false;  // 現場差異コマンド送信フラグ
 
     public void onClickSiteDiffButton(View v) {
 
@@ -121,7 +121,6 @@ public class ProcedureActivity extends AppCompatActivity
         final DataStructureUtil dsHelper = new DataStructureUtil();
         final String currentInSno = Integer.toString(mProcFragment.getCurrentInSno());
         final String commandBasic = "{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"";
-//        final boolean sendFlag = false;
         popupView.findViewById(R.id.procedure_skip_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // この手順をスキップする
@@ -132,9 +131,7 @@ public class ProcedureActivity extends AppCompatActivity
 //                String commandString = commandBasic + "1\"}";
                 String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
-
-//                sendFlag = true;
-//                popupView.findViewById(R.id.procedure_add_button).removeCallbacks();
+                sendFlag = true;
             }
         });
         popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
@@ -146,6 +143,7 @@ public class ProcedureActivity extends AppCompatActivity
 //                String commandString = commandBasic + "2\"}";
 //                String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
+                sendFlag = true;
             }
         });
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
@@ -261,7 +259,7 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     /* 要求受信 */
-    private String recievedCmd = "";    // コマンド受渡変数
+    private String recievedCmd = "";      // コマンド受渡変数
     private Bundle recievedParam = null;  // パラメータ受渡変数
     @Override
     public String onRequestRecieved(String data){
@@ -272,7 +270,7 @@ public class ProcedureActivity extends AppCompatActivity
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         String mData ="";
 
-        // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
+        // 本コールバックでの描画処理はエラーになる
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
 
             System.out.println("CLICK!:" + data);
@@ -285,12 +283,14 @@ public class ProcedureActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50", "");
         }
 
+        // サーバーからの指示を待機(期待しないコマンドも含め)
+        recieveFragment.listen();
+
         return mData;
     }
 
     @Override
     public void onFinishRecieveProgress() {
-        // コマンド送受信後の 次への処理判定
 
         if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の描画処理
             // 確認待機中の着色の解除
@@ -310,7 +310,6 @@ public class ProcedureActivity extends AppCompatActivity
             if (lastInSno != currentInSno) {
                 // 手順を進める
                 mProcFragment.updateProcedure();
-                recieveFragment.listen();  // サーバーからの指示を待機
             } else {
                 // 最後の手順の場合、手順を進めずに表示のみ更新
                 mProcFragment.updateLastProcedure();
