@@ -107,15 +107,14 @@ public class ProcedureActivity extends AppCompatActivity
 
     // ポップアップの初期化
     private PopupWindow mPopupWindow;
-    private int diffFlag;
-    private boolean sendFlag = false;  // 現場差異コマンド送信フラグ
+    private int diffFlag = 0;  // 現場差異フラグ
 
     public void onClickSiteDiffButton(View v) {
 
         mPopupWindow = new PopupWindow(ProcedureActivity.this);
 
         // レイアウト設定
-        View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
 
         // ボタン設定
         final DataStructureUtil dsHelper = new DataStructureUtil();
@@ -124,34 +123,49 @@ public class ProcedureActivity extends AppCompatActivity
         popupView.findViewById(R.id.procedure_skip_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // この手順をスキップする
+                // ボタン切替
                 int colorNum = getResources().getColor(R.color.colorGrayButton);
                 v.setBackgroundColor(colorNum);
+                if (diffFlag > 0) {
+                    int anotherColorNum = getResources().getColor(R.color.colorYellowButton);
+                    View anotherV = popupView.findViewById(R.id.procedure_add_button);
+                    anotherV.setBackgroundColor(anotherColorNum);
+                }
+                // コマンド送信
                 diffFlag = 1;
-                String commandString = "{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"" + diffFlag + "\"}";
-//                String commandString = commandBasic + "1\"}";
+                String commandString = commandBasic + diffFlag +"\"}";
                 String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
-                sendFlag = true;
             }
         });
         popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // この手順の前に操作を追加する
+                // ボタン切替
                 int colorNum = getResources().getColor(R.color.colorGrayButton);
                 v.setBackgroundColor(colorNum);
-                String data = dsHelper.makeSendData("14","{\"in_sno\":\"" + currentInSno + "\",\"Com\":\"2\"}");
-//                String commandString = commandBasic + "2\"}";
-//                String data = dsHelper.makeSendData("14", commandString);
+                if (diffFlag > 0) {
+                    int anotherColorNum = getResources().getColor(R.color.colorYellowButton);
+                    View anotherV = popupView.findViewById(R.id.procedure_skip_button);
+                    anotherV.setBackgroundColor(anotherColorNum);
+                }
+                // コマンド送信
+                diffFlag = 2;
+                String commandString = commandBasic + diffFlag +"\"}";
+                String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
-                sendFlag = true;
             }
         });
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (mPopupWindow.isShowing()) {  // キャンセル
-                    mPopupWindow.dismiss();
+            public void onClick(View v) {  // キャンセル
+                if (diffFlag > 0) {  // サーバへ現場差異を指示していたらキャンセルを通知
+                    String commandString = "{\"Com\":\"0\"}";
+                    String data = dsHelper.makeSendData("14", commandString);
+                    sendFragment.send(data);
                 }
+                diffFlag = 0;
+                mPopupWindow.dismiss();  // ポップアップ削除
             }
         });
 
