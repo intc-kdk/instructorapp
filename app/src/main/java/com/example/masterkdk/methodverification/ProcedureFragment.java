@@ -59,14 +59,11 @@ public class ProcedureFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // 手順データをIntentから取得
-        Intent intent = getActivity().getIntent();
-//        String resultSt = intent.getStringExtra("proc");
-        String resultSt = intent.getStringExtra("resultStTmp");  // 指示者タブレットの調整箇所
+//        Intent intent = getActivity().getIntent();
+//        String resultSt = intent.getStringExtra("resultStTmp");  // 指示者タブレットの調整箇所
 
         // 手順データを解析し、tejunを取り出す
         DataStructureUtil dsHelper = new DataStructureUtil();
-        String cmd = dsHelper.setRecievedData(resultSt);
-        Bundle tmpBundle = dsHelper.getRecievedData();
 
         View view = inflater.inflate(R.layout.fragment_procedure_list, container, false);
 
@@ -85,7 +82,7 @@ public class ProcedureFragment extends Fragment {
             mRecyclerViewAdapter = (ProcedureRecyclerViewAdapter)recyclerView.getAdapter();
             mItems = dsHelper.ITEMS;
         }
-        int last = dsHelper.ITEMS.size()-1;
+//        int last = dsHelper.ITEMS.size()-1;
 
         // TODO: コメントではない最終行を取得する
         mLastInSno = getLastPorcedure();
