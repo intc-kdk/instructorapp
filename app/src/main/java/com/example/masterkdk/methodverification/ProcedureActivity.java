@@ -256,7 +256,8 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
-        if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
+//        if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
+        if(cmd.equals("50") && diffFlag == 0) { // 指示が確認者タブレットに伝わった
             // 画面全体の着色
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
@@ -315,7 +316,8 @@ public class ProcedureActivity extends AppCompatActivity
             int lastInSno = mProcFragment.getLastInSno();
             int currentInSno = mProcFragment.getCurrentInSno();
             String[] arrDate = recievedParam.getString("ts_b").split(" ");
-            mProcFragment.setProcStatus(position, "7", arrDate[1]);
+//            mProcFragment.setProcStatus(position, "7", arrDate[1]);
+            mProcFragment.setProcStatus(position, "7", arrDate[1], "False", "");
 
 //            if (lastInSno > position + 1) {
             if (lastInSno != currentInSno) {
@@ -334,8 +336,8 @@ public class ProcedureActivity extends AppCompatActivity
 
             // TODO:手順の表示を更新
             int position = mProcFragment.getCurrentPos();
-            String tx_gs="";
-            String status="";
+            String tx_gs = "";
+            String status = "";
             // cd_status スキップは"7", 追加は "0"
             if(diffFlag == 1){
                 status="7";
@@ -344,7 +346,7 @@ public class ProcedureActivity extends AppCompatActivity
                 status="0";
                 tx_gs="追加";
             }
-//            mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
+            mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
             // TODO: 最終エントリの判定要
 
             if(diffFlag == 1) {  // SKIP
@@ -352,6 +354,9 @@ public class ProcedureActivity extends AppCompatActivity
             }else{
 //                mProcFragment.addProcedure();   // 追加はそのままの手順
             }
+
+            diffFlag = 0;
+            recieveFragment.listen();  // サーバーからの指示を待機
 
         } else {
             //想定外コマンドの時も受信待機は継続
