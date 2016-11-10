@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.masterkdk.methodverification.ProcedureFragment.OnListFragmentInteractionListener;
@@ -89,6 +90,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         public final TextView mRemarksView;
         public ProcItem mItem;
 
+        public FrameLayout mWrapPlace;
+        public FrameLayout mWrapOperation;
+
         private ProcedureRecyclerViewAdapter mAdapter;
 
         public ProcedureViewHolder(View view, ProcedureRecyclerViewAdapter adapter) {
@@ -98,6 +102,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             mPlaceView = (TextView) view.findViewById(R.id.proc_place);
             mOperationView = (TextView) view.findViewById(R.id.proc_operation);
             mRemarksView = (TextView) view.findViewById(R.id.proc_remarks);
+
+            mWrapPlace = (FrameLayout) view.findViewById(R.id.wrap_place);
+            mWrapOperation = (FrameLayout) view.findViewById(R.id.wrap_operation);
 
             mAdapter = adapter;
             mOperationView.setOnClickListener(this);  //  操作ボタンにリスナー設定
@@ -129,6 +136,61 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                     Integer.valueOf( code.substring( 3, 6 ), 16 ) );
             return color;
         }
+        private void setItemColor(ProcItem data){
+            Resources res = this.mView.getResources();
+
+            // 初期設定
+            int bgColor = res.getColor(R.color.colorBgTransparent);
+            int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色（水色）
+            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色（濃水色）
+            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色（黒）
+            int bgWrapPlace = res.getColor(R.color.colorBgTransparent);             // 盤名のラップフレームの色（透過）
+            int bgWrapOperation = res.getColor(R.color.colorBgTransparent);         // 操作ボタンのラップフレームの色（透過）
+            int bgNumberColor = res.getColor(R.color.colorBgTransparent);  // 手順番号欄の背景色
+            int bgRemarksColor = res.getColor(R.color.colorBgTransparent); // 確認時刻欄の背景色
+
+            if(data.cd_status.equals("1")){   // 実行中の時
+                bgColor = res.getColor(R.color.colorYellowButton);
+            }
+
+            if(data.cd_status.equals("1")) {  // 指示
+
+                if(data.bo_gs.equals("True")){
+                    // 盤情報周り（黄）
+                    bgWrapPlace= res.getColor(R.color.colorYellowButton);
+                    bgWrapOperation= res.getColor(R.color.colorYellowButton);
+                }
+            }else if(data.cd_status.equals("7")){  //完了
+                // 確認待機時の着色は、緑が残ってしまうので、要素毎に行う
+
+                if(data.bo_gs.equals("True")){
+                    bgPlaceColor = res.getColor(R.color.colorGrayButton);
+                    txtColor = res.getColor(R.color.colorText);
+                    if(data.tx_gs.equals("スキップ")) {
+                        btnColor = res.getColor(R.color.colorGrayButton);
+
+                        bgNumberColor = res.getColor(R.color.colorGrayButton);
+                        bgRemarksColor = res.getColor(R.color.colorGrayButton);
+
+                    }else{
+                        btnColor = getColorInt(data.tx_clr2);
+                    }
+                }else {
+                    btnColor = getColorInt(data.tx_clr2);
+                    bgPlaceColor = res.getColor(R.color.colorBoardEquipmentDoneText);
+                    txtColor = res.getColor(R.color.colorText);
+                }
+            }
+
+            this.mView.setBackgroundColor(bgColor);
+            this.mPlaceView.setBackgroundColor(bgPlaceColor);
+            this.mOperationView.setBackgroundColor(btnColor);
+            this.mOperationView.setTextColor(txtColor);
+            this.mWrapPlace.setBackgroundColor(bgWrapPlace);
+            this.mWrapOperation.setBackgroundColor(bgWrapOperation);
+            this.mNumberView.setBackgroundColor(bgNumberColor);
+            this.mRemarksView.setBackgroundColor(bgRemarksColor);
+        }
         private String getRemarks(String tx_gs, String remark){
             String rc="";
 
@@ -146,53 +208,24 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             } else {
                 rc = remark;
             }
-/*
+
             if(tx_gs.equals("追加") && ! rc.equals("")){
                 rc = tx_gs + "\r\n" + rc;
             } else {
                 rc = tx_gs + rc;
             }
-*/
+
             return rc;
         }
         public void onBindItemViewHolder(final ProcItem data) {
 
-            this.noTap = true;
             this.mItem = data;
             this.mNumberView.setText(data.tx_sno);
             this.mPlaceView.setText(data.tx_s_l);
             this.mOperationView.setText(data.tx_action);
             this.mRemarksView.setText(getRemarks(data.tx_gs, data.ts_b));
 
-            Resources res = this.mView.getResources();
-            int bgColor = Color.parseColor("#00000000");   // 行の背景色
-            int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色
-            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色
-            int txtColor= res.getColor(R.color.colorTextBlack);
-            if(data.cd_status.equals("1")){   // 指示前かつ発令可能な時(実装上の都合)
-                bgColor = res.getColor(R.color.colorYellowButton);
-            }
-            if(data.cd_status.equals("7")){   // 実行終了の時
-                btnColor = getColorInt(data.tx_clr2);
-                bgPlaceColor= res.getColor(R.color.colorBoardEquipmentDoneText);
-                txtColor = res.getColor(R.color.colorText);
-            }
-
-            this.mView.setBackgroundColor(bgColor);
-            this.mPlaceView.setBackgroundColor(bgPlaceColor);
-            this.mOperationView.setBackgroundColor(btnColor);
-            this.mOperationView.setTextColor(txtColor);
-
-            this.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (null != mListener) {
-                        // Notify the active callbacks interface (the activity, if the
-                        // fragment is attached to one) that an item has been selected.
-                        //mListener.onListFragmentInteraction(data);
-                    }
-                }
-            });
+            setItemColor(data);
         }
     }
 

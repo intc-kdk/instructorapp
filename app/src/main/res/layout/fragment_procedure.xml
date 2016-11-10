@@ -18,32 +18,45 @@
         android:paddingTop="15dp"
         android:paddingBottom="15dp" />
 
-    <TextView
-        android:id="@+id/proc_place"
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:background="@color/colorBoardEquipmentText"
-        android:gravity="center_vertical|center"
-        android:text="1111111111111111111111111111111111111111111111111111"
-        android:textSize="25sp"
-        android:layout_width="350dp"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp" />
+        android:padding="5dp"
+        android:id="@+id/wrap_place">
 
-    <TextView
+        <TextView
+            android:id="@+id/proc_place"
+            android:layout_height="match_parent"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:background="@color/colorBoardEquipmentText"
+            android:gravity="center_vertical|center"
+            android:text="1111111111111111111111111111111111111111111111111111"
+            android:textSize="25sp"
+            android:layout_width="350dp"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/proc_operation"
-        android:layout_weight="1"
-        android:background="@color/colorInstructButton"
-        android:layout_margin="5dp"
-        android:gravity="center_vertical"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:layout_width="175dp"
-        android:textColor="@color/colorTextBlack"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp" />
+        android:padding="5dp"
+        android:id="@+id/wrap_operation">
+
+        <TextView
+            android:layout_height="match_parent"
+            android:id="@+id/proc_operation"
+            android:layout_weight="1"
+            android:background="@color/colorInstructButton"
+            android:gravity="center_vertical"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:layout_width="175dp"
+            android:textColor="@color/colorTextBlack"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp" />
+    </FrameLayout>
 
     <TextView
         android:layout_width="125dp"

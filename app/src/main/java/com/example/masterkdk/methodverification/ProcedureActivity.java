@@ -180,14 +180,6 @@ public class ProcedureActivity extends AppCompatActivity
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // キャンセル
-/*
-                if (diffFlag > 0) {  // サーバへ現場差異を指示していたらキャンセルを通知
-                    String commandString = commandBasic + "0\"}";
-                    String data = dsHelper.makeSendData("14", commandString);
-                    sendFragment.send(data);
-                }
-                diffFlag = 0;
-*/
                 mPopupWindow.dismiss();  // ポップアップ削除
             }
         });
@@ -220,14 +212,15 @@ public class ProcedureActivity extends AppCompatActivity
             @Override
             public void onDismiss() {
                 // 本コールバックは、キャンセルボタンだけでなく、ポップアップ外タップにも対応
-/*
+
                 if (diffFlag > 0) {  // サーバへ現場差異を指示していたらキャンセルを通知
                     String commandString = commandBasic + "0\"}";
                     String data = dsHelper.makeSendData("14", commandString);
+//                    diffFlag = 0;
                     sendFragment.send(data);
                 }
                 diffFlag = 0;
-*/
+
                 // ボタン表示切替
                 Button siteDiffButton = (Button) findViewById(R.id.site_difference_button);
                 Drawable backgroundPicture = getResources().getDrawable(R.drawable.bg_diff_on);
@@ -286,8 +279,7 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
-//        if(cmd.equals("50")) { // 指示が確認者タブレットに伝わった
-        if(cmd.equals("50") && diffFlag == 0) { // 指示が確認者タブレットに伝わった
+        if(cmd.equals("54")) { // 指示が確認者タブレットに伝わった
             // 画面全体の着色
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
@@ -300,7 +292,6 @@ public class ProcedureActivity extends AppCompatActivity
     @Override
     public void onFinishTransmission(String data){
         // 送信処理終了
-
     }
 
     /* 要求受信 */
@@ -346,10 +337,8 @@ public class ProcedureActivity extends AppCompatActivity
             int lastInSno = mProcFragment.getLastInSno();
             int currentInSno = mProcFragment.getCurrentInSno();
             String[] arrDate = recievedParam.getString("ts_b").split(" ");
-//            mProcFragment.setProcStatus(position, "7", arrDate[1]);
             mProcFragment.setProcStatus(position, "7", arrDate[1], "False", "");
 
-//            if (lastInSno > position + 1) {
             if (lastInSno != currentInSno) {
                 // 手順を進める
                 mProcFragment.updateProcedure();
@@ -358,7 +347,6 @@ public class ProcedureActivity extends AppCompatActivity
                 // 最後の手順の場合、手順を進めずに表示のみ更新
                 mProcFragment.updateLastProcedure();
             }
-//        }
         } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 
             // ポップアップを閉じる
@@ -382,7 +370,7 @@ public class ProcedureActivity extends AppCompatActivity
             if(diffFlag == 1) {  // SKIP
                 mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
             }else{
-//                mProcFragment.addProcedure();   // 追加はそのままの手順
+                mProcFragment.addProcedure();   // 追加はそのままの手順
             }
 
             diffFlag = 0;

@@ -15,10 +15,11 @@
     <color name="colorDiffElement">@android:color/darker_gray</color>
     <color name="colorInstructDisplay">#cccc00</color>
 
-    <!--S-04 手順書画面(鈴木さんコード)-->
+    <!--S-04 手順書画面(鈴木さんコード流用)-->
     <color name="colorTextBlack">#000000</color>
     <color name="colorTextLightGray">#cccccc</color>
     <color name="colorBoardEquipmentDoneText">#66ffcc</color>
     <color name="colorGrayButton">#808080</color>
+    <color name="colorBgTransparent">#00000000</color>
 
 </resources>

@@ -204,6 +204,10 @@ public class ProcedureFragment extends Fragment {
         mCurrentPos=nextPos;
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
+    public void addProcedure(){
+        // 現場差異で追加の時、表示の更新のみ行う
+        mRecyclerViewAdapter.notifyDataSetChanged();
+    }
     public void updateLastProcedure(){
         // 最後の手順の場合、手順を進めずに表示のみ更新
         mRecyclerViewAdapter.notifyDataSetChanged();
