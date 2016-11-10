@@ -10,15 +10,17 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.PopupWindow;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil.ProcItem;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 //import java.util.List;
 /*
@@ -65,6 +67,25 @@ public class ProcedureActivity extends AppCompatActivity
 
         // サーバーからの指示を待機
         recieveFragment.listen();
+
+        // 指示後の確認待機中であれば画面着色
+        Intent intnt = getIntent();
+        String intntString = intnt.getStringExtra("resultStTmp");
+        String[] resultArr = intntString.split("@");
+        String cdStatus = "";
+        try {
+            JSONObject jsonObj = new JSONObject(resultArr[1]);
+            cdStatus = jsonObj.getJSONObject("t_sno").getString("cd_status");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(cdStatus.equals("1")) {
+            // 画面全体の着色
+            Resources resources = getResources();
+            int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
+            View wrapProcedure = findViewById(R.id.WrapProcedure);
+            wrapProcedure.setBackgroundColor(instructDisplayColor);
+        }
 
         // ボタン(固定)へリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
@@ -159,12 +180,14 @@ public class ProcedureActivity extends AppCompatActivity
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // キャンセル
+/*
                 if (diffFlag > 0) {  // サーバへ現場差異を指示していたらキャンセルを通知
-                    String commandString = "{\"Com\":\"0\"}";
+                    String commandString = commandBasic + "0\"}";
                     String data = dsHelper.makeSendData("14", commandString);
                     sendFragment.send(data);
                 }
                 diffFlag = 0;
+*/
                 mPopupWindow.dismiss();  // ポップアップ削除
             }
         });
@@ -192,12 +215,19 @@ public class ProcedureActivity extends AppCompatActivity
         String siteDifferenceTextString = getString(R.string.S_05_site_difference_text);
         siteDifferenceText.setText(siteDifferenceTextString);
 
-        // ポップアップ削除時は、手順書画面フッタのメッセージも削除
+        // ポップアップ削除時の処理
         mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                // キャンセルボタンだけでなく、ポップアップ外タップ時にも対応
-
+                // 本コールバックは、キャンセルボタンだけでなく、ポップアップ外タップにも対応
+/*
+                if (diffFlag > 0) {  // サーバへ現場差異を指示していたらキャンセルを通知
+                    String commandString = commandBasic + "0\"}";
+                    String data = dsHelper.makeSendData("14", commandString);
+                    sendFragment.send(data);
+                }
+                diffFlag = 0;
+*/
                 // ボタン表示切替
                 Button siteDiffButton = (Button) findViewById(R.id.site_difference_button);
                 Drawable backgroundPicture = getResources().getDrawable(R.drawable.bg_diff_on);
@@ -205,7 +235,7 @@ public class ProcedureActivity extends AppCompatActivity
                 Resources res = getResources();
                 siteDiffButton.setTextColor(res.getColor(R.color.colorTextBlack));
 
-                siteDifferenceText.setText("");  // フッタ文言削除
+                siteDifferenceText.setText("");  // 画面フッタ文言削除
             }
         });
     }
