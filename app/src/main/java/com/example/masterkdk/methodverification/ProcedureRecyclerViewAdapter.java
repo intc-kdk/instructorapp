@@ -152,7 +152,10 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             if(data.cd_status.equals("1")){   // 実行中の時
                 bgColor = res.getColor(R.color.colorYellowButton);
             }
-
+            if(data.bo_gs.equals("True")){
+                bgNumberColor= res.getColor(R.color.colorGrayButton);
+                bgRemarksColor= res.getColor(R.color.colorGrayButton);
+            }
             if(data.cd_status.equals("1")) {  // 指示
 
                 if(data.bo_gs.equals("True")){
@@ -161,17 +164,15 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                     bgWrapOperation= res.getColor(R.color.colorYellowButton);
                 }
             }else if(data.cd_status.equals("7")){  //完了
-                // 確認待機時の着色は、緑が残ってしまうので、要素毎に行う
+                // 盤情報周り（緑）
+                bgWrapPlace= res.getColor(R.color.colorBgTransparent);
+                bgWrapOperation= res.getColor(R.color.colorBgTransparent);
 
                 if(data.bo_gs.equals("True")){
                     bgPlaceColor = res.getColor(R.color.colorGrayButton);
                     txtColor = res.getColor(R.color.colorText);
                     if(data.tx_gs.equals("スキップ")) {
                         btnColor = res.getColor(R.color.colorGrayButton);
-
-                        bgNumberColor = res.getColor(R.color.colorGrayButton);
-                        bgRemarksColor = res.getColor(R.color.colorGrayButton);
-
                     }else{
                         btnColor = getColorInt(data.tx_clr2);
                     }

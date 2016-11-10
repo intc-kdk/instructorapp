@@ -8,15 +8,14 @@
     <TextView
         android:id="@+id/proc_number"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textAlignment="center"
         tools:text="1"
         android:gravity="center_vertical|center"
         android:textSize="25sp"
         android:layout_width="50dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp" />
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp" />
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -63,11 +62,10 @@
         android:layout_height="match_parent"
         android:id="@+id/proc_remarks"
         android:layout_weight="1"
-        android:layout_margin="5dp"
         android:gravity="center_vertical"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textColor="@color/colorTextBlack"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp" />
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp" />
 </LinearLayout>

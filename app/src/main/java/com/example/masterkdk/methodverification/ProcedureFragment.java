@@ -117,7 +117,10 @@ public class ProcedureFragment extends Fragment {
         // 最終手順の in_sno を取得する
         return mLastInSno;
     }
-
+    public ProcItem getCurrentItem(){
+        // 現在の手順の行を取得する
+        return mItems.get(mCurrentPos);
+    }
     public void setFirstProcedure(){
         int pos = 0;
 

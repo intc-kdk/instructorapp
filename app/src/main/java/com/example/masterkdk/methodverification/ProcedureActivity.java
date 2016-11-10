@@ -286,6 +286,8 @@ public class ProcedureActivity extends AppCompatActivity
             View wrapProcedure = findViewById(R.id.WrapProcedure);
             wrapProcedure.setBackgroundColor(instructDisplayColor);
             // ボタンの無効化はRecyclerViewAdapterで行う
+        }else if(cmd.equals("50")){
+            // do nothing
         }
     }
 
@@ -336,8 +338,10 @@ public class ProcedureActivity extends AppCompatActivity
             int position = mProcFragment.getCurrentPos();
             int lastInSno = mProcFragment.getLastInSno();
             int currentInSno = mProcFragment.getCurrentInSno();
+            ProcItem item = mProcFragment.getCurrentItem(); // 現在の手順の行を取得
             String[] arrDate = recievedParam.getString("ts_b").split(" ");
-            mProcFragment.setProcStatus(position, "7", arrDate[1], "False", "");
+
+            mProcFragment.setProcStatus(position, "7", arrDate[1], item.bo_gs, item.tx_gs);  //  bo_gs、tx_gs は更新済みの行から値を設定
 
             if (lastInSno != currentInSno) {
                 // 手順を進める
@@ -347,23 +351,22 @@ public class ProcedureActivity extends AppCompatActivity
                 // 最後の手順の場合、手順を進めずに表示のみ更新
                 mProcFragment.updateLastProcedure();
             }
-        } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 
-            // ポップアップを閉じる
-            mPopupWindow.dismiss();
+        } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 
             // TODO:手順の表示を更新
             int position = mProcFragment.getCurrentPos();
             String tx_gs = "";
             String status = "";
-            // cd_status スキップは"7", 追加は "0"
+            // cd_status スキップは"7", 追加は "1"
             if(diffFlag == 1){
                 status="7";
                 tx_gs="スキップ";
             }else if(diffFlag == 2){
-                status="0";
+                status="1";
                 tx_gs="追加";
             }
+
             mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
             // TODO: 最終エントリの判定要
 
@@ -374,6 +377,8 @@ public class ProcedureActivity extends AppCompatActivity
             }
 
             diffFlag = 0;
+            // ポップアップを閉じる
+            mPopupWindow.dismiss();
             recieveFragment.listen();  // サーバーからの指示を待機
 
         } else {
