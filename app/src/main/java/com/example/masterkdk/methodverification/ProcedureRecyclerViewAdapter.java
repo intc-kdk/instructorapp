@@ -219,7 +219,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             return rc;
         }
         public void onBindItemViewHolder(final ProcItem data) {
-
+            this.noTap=true;
             this.mItem = data;
             this.mNumberView.setText(data.tx_sno);
             this.mPlaceView.setText(data.tx_s_l);
