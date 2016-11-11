@@ -21,6 +21,11 @@
                 <action android:name="android.intent.action.PROCEDURE" />
             </intent-filter>
         </activity>
+        <activity android:name=".ProcedureEndActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCEDUREEND" />
+            </intent-filter>
+        </activity>
         <activity android:name=".TopActivity">
             <intent-filter>
                 <action android:name="android.intent.action.TOP" />

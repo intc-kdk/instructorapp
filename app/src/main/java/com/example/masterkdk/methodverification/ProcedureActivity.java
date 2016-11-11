@@ -348,8 +348,9 @@ public class ProcedureActivity extends AppCompatActivity
                 mProcFragment.updateProcedure();
                 recieveFragment.listen();  // サーバーからの指示を待機
             } else {
-                // 最後の手順の場合、手順を進めずに表示のみ更新
-                mProcFragment.updateLastProcedure();
+                // 手順終了後は手順書終了画面へ遷移
+                Intent intent = new Intent(this, ProcedureEndActivity.class);
+                startActivity(intent);
             }
 
         } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理

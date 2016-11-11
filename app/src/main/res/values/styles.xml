@@ -71,10 +71,6 @@
     <style name="S01TableProcedure">
         <item name="android:background">@android:color/black</item>
         <item name="android:layout_gravity">center</item>
-
-        <!--改行対応 TableLayoutにlayout_widthは設定できない？-->
-        <!--<item name="android:layout_width">790dp</item>-->
-
     </style>
     <style name="S01TableColumnProcedure">
         <item name="android:background">@android:color/white</item>
@@ -87,7 +83,6 @@
         <item name="android:background">@android:color/white</item>
         <item name="android:textColor">@android:color/black</item>
         <item name="android:gravity">left</item>
-<!--        <item name="android:width">790dp</item>-->
     </style>
 
     <!--S-02 トップページ-->
@@ -137,9 +132,6 @@
         <item name="android:gravity">center_horizontal|center_vertical</item>
         <item name="android:textSize">30sp</item>
     </style>
-<!--    <style name="S04ProcedureLayout">
-        <item name="android:height">100dp</item>
-    </style>-->
     <style name="S04ProcedureRow">
         <item name="android:height">100dp</item>
         <item name="android:gravity">left|center_vertical</item>

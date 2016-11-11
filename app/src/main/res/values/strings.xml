@@ -35,4 +35,9 @@
     <string name="S_06_not_all_end_button">指示者確認者のタブレットを終了</string>
     <string name="S_06_all_end_button">全てのタブレットを終了</string>
     <string name="S_06_return_button">メニューへ戻る</string>
+    <string name="S_xx_procedure_end_text1">全ての手順を終了しました。\n\n\n\n</string>
+    <string name="S_xx_procedure_end_text2">下の「OK」をタッチして</string>
+    <string name="S_xx_procedure_end_text3">終了画面の</string>
+    <string name="S_xx_procedure_end_text4">「全てのタブレットを終了する」</string>
+    <string name="S_xx_procedure_end_text5">をタッチしてください。</string>
 </resources>

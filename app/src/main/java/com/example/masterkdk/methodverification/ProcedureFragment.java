@@ -211,10 +211,6 @@ public class ProcedureFragment extends Fragment {
         // 現場差異で追加の時、表示の更新のみ行う
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
-    public void updateLastProcedure(){
-        // 最後の手順の場合、手順を進めずに表示のみ更新
-        mRecyclerViewAdapter.notifyDataSetChanged();
-    }
     public int getCurrentInSno() {
         // システム用の手順書番号in_snoを取得。activityでonListItemClickイベント以外でも取得できる
         ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
