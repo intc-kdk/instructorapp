@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil.ProcItem;
+import com.example.masterkdk.methodverification.Util.alertDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -288,6 +289,12 @@ public class ProcedureActivity extends AppCompatActivity
             // ボタンの無効化はRecyclerViewAdapterで行う
         }else if(cmd.equals("50")){
             // do nothing
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※" + data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title), getResources().getString(R.string.nw_err_message));
         }
     }
 
@@ -297,8 +304,8 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     /* 要求受信 */
-    private String recievedCmd = "";      // コマンド受渡変数
-    private Bundle recievedParam = null;  // パラメータ受渡変数
+//    private String recievedCmd = "";      // コマンド受渡変数
+//    private Bundle recievedParam = null;  // パラメータ受渡変数
     @Override
     public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
@@ -312,22 +319,30 @@ public class ProcedureActivity extends AppCompatActivity
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
 
             System.out.println("CLICK!:" + data);
-            recievedCmd = cmd;
-            recievedParam = dsHelper.getRecievedData();
+//            recievedCmd = cmd;
+//            recievedParam = dsHelper.getRecievedData();
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
-            recievedCmd = cmd;
+//            recievedCmd = cmd;
             mData = dsHelper.makeSendData("50", "");
+        } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
+            mData = "";
+        } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
+            mData = "";
         }
 
         return mData;
     }
 
     @Override
-    public void onFinishRecieveProgress() {
+    public void onFinishRecieveProgress(String data) {
 
-        if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の描画処理
+        DataStructureUtil dsHelper = new DataStructureUtil();
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+
+//        if(recievedCmd.equals("55")) { // 確認者タブレットで確認後の描画処理
+        if(cmd.equals("55")) { // 確認者タブレットで確認後の描画処理
             // 確認待機中の着色の解除
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorBackGround);
@@ -339,7 +354,8 @@ public class ProcedureActivity extends AppCompatActivity
             int lastInSno = mProcFragment.getLastInSno();
             int currentInSno = mProcFragment.getCurrentInSno();
             ProcItem item = mProcFragment.getCurrentItem(); // 現在の手順の行を取得
-            String[] arrDate = recievedParam.getString("ts_b").split(" ");
+//            String[] arrDate = recievedParam.getString("ts_b").split(" ");
+            String[] arrDate = dsHelper.getRecievedData().getString("ts_b").split(" ");
 
             mProcFragment.setProcStatus(position, "7", arrDate[1], item.bo_gs, item.tx_gs);  //  bo_gs、tx_gs は更新済みの行から値を設定
 
@@ -353,7 +369,8 @@ public class ProcedureActivity extends AppCompatActivity
                 startActivity(intent);
             }
 
-        } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
+//        } else if(recievedCmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
+        } else if(cmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 
             // TODO:手順の表示を更新
             int position = mProcFragment.getCurrentPos();
@@ -381,6 +398,20 @@ public class ProcedureActivity extends AppCompatActivity
             // ポップアップを閉じる
             mPopupWindow.dismiss();
             recieveFragment.listen();  // サーバーからの指示を待機
+
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
+
+        } else if (cmd.equals("92")) {  // タイムアウト
+
+            System.out.println("※※※※　受信タイムアウト ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
 
         } else {
             //想定外コマンドの時も受信待機は継続

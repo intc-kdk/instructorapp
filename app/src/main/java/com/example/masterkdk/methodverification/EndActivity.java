@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
+import com.example.masterkdk.methodverification.Util.alertDialog;
 
 /**
  * Created by masterkdk on 2016/09/26.
@@ -16,9 +17,6 @@ import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 
 public class EndActivity extends FragmentActivity implements View.OnClickListener, TransmissionFragment.TransmissionFragmentListener {
 
-//    private static final String HOST = "192.168.10.20";
-//    private static final int PORT = 1280;  // ポート(実環境)
-//    private static final int PORT = 1234;  // ポート(VisualStudio)
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
     @Override
@@ -80,6 +78,13 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
 
             startActivity(intent);
+
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※" + data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title), getResources().getString(R.string.nw_err_message));
         }
     }
 

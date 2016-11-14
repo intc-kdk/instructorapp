@@ -174,7 +174,7 @@ System.out.println("◆◆◆ ソケットリユース ◆◆◆");
             @Override
             protected void onPostExecute(String result){
                 // 応答処理終了
-                ((ReceptionFragmentListener)getActivity()).onFinishRecieveProgress();
+                ((ReceptionFragmentListener)getActivity()).onFinishRecieveProgress(result);
             }
         }.execute();
     }
@@ -184,7 +184,7 @@ System.out.println("◆◆◆ ソケットリユース ◆◆◆");
      */
     public interface ReceptionFragmentListener {
         String onRequestRecieved(String data);
-        void onFinishRecieveProgress();
+        void onFinishRecieveProgress(String data);
 
     }
 

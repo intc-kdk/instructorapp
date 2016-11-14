@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
+import com.example.masterkdk.methodverification.Util.alertDialog;
 
 
 /**
@@ -75,6 +76,13 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
             intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
 
             startActivity(intent);
+
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※" + data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title), getResources().getString(R.string.nw_err_message));
         }
     }
 

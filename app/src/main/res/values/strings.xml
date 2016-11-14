@@ -40,4 +40,6 @@
     <string name="S_xx_procedure_end_text3">終了画面の</string>
     <string name="S_xx_procedure_end_text4">「全てのタブレットを終了する」</string>
     <string name="S_xx_procedure_end_text5">をタッチしてください。</string>
+    <string name="nw_err_title">サーバと通信できません。</string>
+    <string name="nw_err_message">サーバ・ネットワークを確認して、再度アプリケーションを起動してください。</string>
 </resources>
