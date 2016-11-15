@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
-import com.example.masterkdk.methodverification.Util.alertDialog;
+import com.example.masterkdk.methodverification.Util.alertDialogUtil;
 
 
 public class MainActivity extends AppCompatActivity
@@ -160,10 +160,10 @@ public class MainActivity extends AppCompatActivity
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※"+data);
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
             System.out.println("※※※※　受信タイムアウト ※※※"+data);
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if(cmd.equals("99")){
             // 待ち受けを中止する
             recieveFragment.closeServer();
@@ -185,8 +185,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /* 要求受信 */
-//    private String recievedCmd = "";    // コマンド受渡変数
-//    private String recievedParam = "";  // パラメータ受渡変数
     @Override
     public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
@@ -199,16 +197,12 @@ public class MainActivity extends AppCompatActivity
         if(cmd.equals("57")) { // 盤タブレットの設置状況が更新された
             // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
             System.out.println("CLICK!:" + data);
-//            recievedCmd = cmd;
-//            recievedParam = data.split("@")[1];
             mData = dsHelper.makeSendData("50","");
-
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
             mData = "";
         } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
             mData = "";
         } else if(cmd.equals("99")) {
-//            recievedCmd = cmd;
             mData = dsHelper.makeSendData("99","");
         }
 
@@ -222,7 +216,6 @@ public class MainActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
-//        if(recievedCmd.equals("57")) { // 盤タブレット更新後の描画
         if(cmd.equals("57")) { // 盤タブレット更新後の描画
             System.out.println("57受信");
             // 設置状況テーブルの更新
@@ -232,7 +225,6 @@ public class MainActivity extends AppCompatActivity
             try {
                 // 盤タブレット設置状況の表示
                 String[] tabletTableItem = {"名称", "状況"};  // タブレット設置状況の項目
-//                JSONObject responseJson = new JSONObject(recievedParam);
                 JSONObject responseJson = new JSONObject(data.split("@")[1]);
                 JSONArray tabletArray = responseJson.getJSONArray("tablet");
                 TableRow.LayoutParams columnLayout = new TableRow.LayoutParams();  // 通常の行のレイアウトパラメータ
@@ -264,18 +256,17 @@ public class MainActivity extends AppCompatActivity
         } else if (cmd.equals("91")) {  // 受信エラー処理
 
             System.out.println("※※※※　受信エラー ※※※"+data);
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
 
         } else if (cmd.equals("92")) {  // タイムアウト
 
             System.out.println("※※※※　受信タイムアウト ※※※"+data);
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
 
-//        } else if(recievedCmd.equals("99")) { // accept キャンセル
         } else if(cmd.equals("99")) { // accept キャンセル
             System.out.println("99受信");
             // ここでは何もせず、応答の"99"受信で処理

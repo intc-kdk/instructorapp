@@ -17,7 +17,6 @@ public class SettingPrefUtil {
 
     private static final String KEY_SERVER_PORT = "port.server";    // key
     private static final int KEY_SERVER_PORT_DEFAULT = 1234;   // default value
-//    private static final int KEY_SERVER_PORT_DEFAULT = 1280;
 
     private static final String KEY_CLIENT_IP_ADDR = "ip.client";             // key
     private static final String KEY_CLIENT_IP_ADDR_DEFAULT = "127.0.0.1"; // default value
