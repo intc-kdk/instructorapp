@@ -118,12 +118,8 @@ public class ProcedureActivity extends AppCompatActivity
             this.onClickSiteDiffButton(v);
 
         } else if (id == R.id.return_button) {    // MENUへ戻るボタン
-            intent = new Intent(this, TopActivity.class);
-
-            Intent pI = getIntent();
-            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
-
-            startActivity(intent);
+            // Activity遷移前にrecieveFragment停止
+            sendFragment.halt("99@$");
         }
     }
 
@@ -294,6 +290,14 @@ public class ProcedureActivity extends AppCompatActivity
         } else if (cmd.equals("92")) {  // タイムアウト
             System.out.println("※※※※　受信タイムアウト ※※※" + data);
             alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title), getResources().getString(R.string.nw_err_message));
+        } else if(cmd.equals("99")){
+            // 待ち受けを中止する
+            recieveFragment.closeServer();
+            // 次の画面へ遷移
+            Intent intent = new Intent(this, TopActivity.class);
+            Intent pI = getIntent();
+            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+            startActivity(intent);
         }
     }
 
@@ -326,6 +330,8 @@ public class ProcedureActivity extends AppCompatActivity
             mData = "";
         } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
             mData = "";
+        } else if(cmd.equals("99")) {
+            mData = dsHelper.makeSendData("99","");
         }
 
         return mData;
@@ -406,6 +412,9 @@ public class ProcedureActivity extends AppCompatActivity
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
 
+        } else if(cmd.equals("99")) { // accept キャンセル
+            System.out.println("99受信");
+            // ここでは何もせず、応答の"99"受信で処理
         } else {
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
