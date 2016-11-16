@@ -38,6 +38,8 @@ public class ReceptionFragment extends Fragment {
     private Socket mSocket = null;
     private int mPort;
 
+    private final int timeout = 3000;
+
     private ReceptionFragmentListener mListener;
 
     public ReceptionFragment() {
@@ -114,6 +116,7 @@ System.out.println("☆☆☆ ソケット新規作成 ☆☆☆");
 System.out.println("◆◆◆ ソケットリユース ◆◆◆");
                     }
                     mSocket = mServer.accept();
+                    mSocket.setSoTimeout(timeout);
                     reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                     writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
 
