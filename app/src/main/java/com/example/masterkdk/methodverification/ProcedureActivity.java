@@ -371,7 +371,12 @@ public class ProcedureActivity extends AppCompatActivity
 
         } else if(cmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 
-            // TODO:手順の表示を更新
+            // 確認待機中の場合もあるので元の背景色に戻す
+            Resources resources = getResources();
+            int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+            View wrapProcedure = findViewById(R.id.WrapProcedure);
+            wrapProcedure.setBackgroundColor(instructDisplayColor);
+
             int position = mProcFragment.getCurrentPos();
             String tx_gs = "";
             String status = "";
@@ -385,7 +390,6 @@ public class ProcedureActivity extends AppCompatActivity
             }
 
             mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
-            // TODO: 最終エントリの判定要
 
             if(diffFlag == 1) {  // SKIP
                 mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
