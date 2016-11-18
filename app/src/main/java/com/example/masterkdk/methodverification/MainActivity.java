@@ -126,29 +126,32 @@ public class MainActivity extends AppCompatActivity
                 commentColumnLayout.setMargins(2, 2, 2, 2);
                 commentColumnLayout.span = columnNum;
                 String tableItem = null;
+
                 // 行の追加
-                for (int i = 0; i < procedureArray.length(); i++) {
-                    addRow = new TableRow(this);
-                    // 列を左から追加
-                    for (int j = 0; j < columnNum; j++) {
-                        tableItem = procedureTableItem[j];
-                        innerText = procedureArray.getJSONObject(i).getString(tableItem);
-                        if (tableItem.equals("tx_sno") && innerText.equals("C")) {
-                            // Noが"C"の場合はコメント行を追加
-                            innerText = procedureArray.getJSONObject(i).getString("tx_com");
-                            addColumn = new TextView(this, null, R.attr.S01ProcedureTableCommentColumnDynamic);
-                            addColumn.setText(innerText);
-                            addRow.addView(addColumn, commentColumnLayout);
-                            break;
-                        } else {
-                            // 通常の行の追加
-                            addColumn = new TextView(this, null, R.attr.S01ProcedureTableColumnDynamic);
-                            addColumn.setText(innerText);
-                            addRow.addView(addColumn, columnLayout);
+                TableRow tr = null;
+                int rowNum = procedureArray.length();
+                for (int i=1; i <= rowNum; i++) {
+                    // tx_sno を取得
+                    String tx_sno = procedureArray.getJSONObject(i).getString("tx_sno");
+
+                    if(tx_sno.equals("C")){
+                        // コメント行の追加
+                        getLayoutInflater().inflate(R.layout.procedure_comment_row, tableProcedure);
+                        tr = (TableRow)tableProcedure.getChildAt(i);
+                        innerText = procedureArray.getJSONObject(i).getString("tx_com");
+                        ((TextView) (tr.getChildAt(0))).setText(innerText);
+                    }else {
+                        // 通常行の追加
+                        getLayoutInflater().inflate(R.layout.procedure_row, tableProcedure);
+                        tr = (TableRow) tableProcedure.getChildAt(i);
+
+                        // 対象フィールドの値でカラムを埋める
+                        for (int j = 0; j < columnNum; j++) {
+                            tableItem = procedureTableItem[j];
+                            innerText = procedureArray.getJSONObject(i).getString(tableItem);
+                            ((TextView) (tr.getChildAt(j))).setText(innerText);
                         }
                     }
-
-                    tableProcedure.addView(addRow);
                 }
 
                 // 手順書の保存

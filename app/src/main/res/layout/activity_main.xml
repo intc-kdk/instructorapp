@@ -93,56 +93,64 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView3"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="30dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView16"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="40dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView17"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="150dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView18"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="150dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView20"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="150dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView19"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="130dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView21"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="40dp" />
 
                     <TextView
                         android:text="@string/S_01_table_procedure_column8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView22"
-                        style="@style/S01TableColumnProcedure" />
+                        style="@style/S01TableColumnProcedure"
+                        android:width="40dp" />
 
                 </TableRow>
 
