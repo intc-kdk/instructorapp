@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity
                 // 行の追加
                 TableRow tr = null;
                 int rowNum = procedureArray.length();
-                for (int i=1; i <= rowNum; i++) {
+                for (int i=1; i < rowNum; i++) {
                     // tx_sno を取得
                     String tx_sno = procedureArray.getJSONObject(i).getString("tx_sno");
 
