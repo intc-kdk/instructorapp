@@ -130,20 +130,21 @@ public class MainActivity extends AppCompatActivity
                 // 行の追加
                 TableRow tr = null;
                 int rowNum = procedureArray.length();
-                for (int i=1; i < rowNum; i++) {
+                for (int i=0; i < rowNum; i++) {
                     // tx_sno を取得
                     String tx_sno = procedureArray.getJSONObject(i).getString("tx_sno");
 
+                    int row = i+1;
                     if(tx_sno.equals("C")){
                         // コメント行の追加
                         getLayoutInflater().inflate(R.layout.procedure_comment_row, tableProcedure);
-                        tr = (TableRow)tableProcedure.getChildAt(i);
+                        tr = (TableRow)tableProcedure.getChildAt(row);
                         innerText = procedureArray.getJSONObject(i).getString("tx_com");
                         ((TextView) (tr.getChildAt(0))).setText(innerText);
                     }else {
                         // 通常行の追加
                         getLayoutInflater().inflate(R.layout.procedure_row, tableProcedure);
-                        tr = (TableRow) tableProcedure.getChildAt(i);
+                        tr = (TableRow) tableProcedure.getChildAt(row);
 
                         // 対象フィールドの値でカラムを埋める
                         for (int j = 0; j < columnNum; j++) {
