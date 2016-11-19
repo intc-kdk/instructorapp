@@ -87,8 +87,6 @@ public class MainActivity extends AppCompatActivity
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
         if(cmd.equals("51")) { // 活性が伝わり、設置状況と手順のリストを受信
-            // 手順書の保存
-            this.resultStTmp = data;
             try {
                 // 盤タブレット設置状況の表示
                 String[] tabletTableItem = {"名称", "状況"};  // タブレット設置状況の項目
@@ -155,6 +153,9 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 }
+
+                // 手順書の保存
+                this.resultStTmp = data;
 
             } catch (JSONException e) {
                 e.printStackTrace();
