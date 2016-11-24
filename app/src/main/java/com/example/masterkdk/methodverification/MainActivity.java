@@ -59,26 +59,28 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.start_button).setOnClickListener(this);
     }
 
-    private String resultStTmp = null;
-
     // ボタンクリック時詳細処理
+    private boolean transOk = false;
     @Override
     public void onClick(View v){
 
-        int id = v.getId();
+        // 手順を受信するまで画面遷移させない
+        if (transOk == true) {
+            // recieveFragment停止後にActivity遷移させる為、ここではActivity種別の指定のみ行う
+            int id = v.getId();
+            if (id == R.id.menu_button) {
+                nextActivity="top";
+            } else if (id == R.id.start_button) {
+                nextActivity="conf";
+            }
 
-        // recieveFragment停止後にActivity遷移させる為、ここではActivity種別の指定のみ行う
-        if (id == R.id.menu_button) {
-            nextActivity="top";
-        } else if (id == R.id.start_button) {
-            nextActivity="conf";
+            // Activity遷移前にrecieveFragment停止
+            sendFragment.halt("99@$");
         }
-
-        // Activity遷移前にrecieveFragment停止
-        sendFragment.halt("99@$");
     }
 
     /* 応答受信 */
+    private String resultStTmp = null;
     @Override
     public void onResponseRecieved(String data)  {
         System.out.println("CLICK!:" + data);
@@ -157,6 +159,9 @@ public class MainActivity extends AppCompatActivity
 
                 // 手順書の保存
                 this.resultStTmp = data;
+
+                // 手順を受信したので画面遷移を許可
+                this.transOk = true;
 
             } catch (JSONException e) {
                 e.printStackTrace();
