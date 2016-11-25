@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -21,6 +22,8 @@ import com.example.masterkdk.methodverification.Util.alertDialogUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.example.masterkdk.methodverification.R.layout.popup_layout;
 
 
 //import java.util.List;
@@ -91,6 +94,37 @@ public class ProcedureActivity extends AppCompatActivity
         // ボタン(固定)へリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
         findViewById(R.id.site_difference_button).setOnClickListener(this);
+
+        // 現場差異の確認待機時はポップアップ再現
+        String cdGsmodeTemp = "";
+        try {
+            JSONObject jsonObj = new JSONObject(resultArr[1]);
+            cdGsmodeTemp = jsonObj.getJSONObject("t_sno").getString("cd_gsmode");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final String cdGsmode = cdGsmodeTemp;  // Handler内部メソッドに渡す為、final変数へ渡す
+        Handler handler = new Handler();
+        handler.post(new Runnable(){  // ポップアップはactivity初期化後()の表示でないとエラー
+            @Override
+            public void run(){
+                if (cdGsmode.equals("5") || cdGsmode.equals("6")) {
+                    // 現場差異ボタンタップ
+                    findViewById(R.id.site_difference_button).callOnClick();
+                    // 各差異ボタンのタップ状態再現
+                    Button gSButton;
+                    View popUp = mPopupWindow.getContentView();
+                    int colorNum = getResources().getColor(R.color.colorGrayButton);
+                    if (cdGsmode.equals("5")) {
+                        diffFlag = 1;
+                        popUp.findViewById(R.id.procedure_skip_button).setBackgroundColor(colorNum);
+                    } else if(cdGsmode.equals("6")) {
+                        diffFlag = 2;
+                        popUp.findViewById(R.id.procedure_add_button).setBackgroundColor(colorNum);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -132,7 +166,7 @@ public class ProcedureActivity extends AppCompatActivity
         mPopupWindow = new PopupWindow(ProcedureActivity.this);
 
         // レイアウト設定
-        final View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+        final View popupView = getLayoutInflater().inflate(popup_layout, null);
 
         // ボタン設定
         final DataStructureUtil dsHelper = new DataStructureUtil();
