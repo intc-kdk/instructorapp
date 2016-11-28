@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -20,6 +21,7 @@ import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil.ProcItem;
 import com.example.masterkdk.methodverification.Util.alertDialogUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +46,9 @@ public class ProcedureActivity extends AppCompatActivity
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
     private ProcedureFragment mProcFragment;
+
+    private String recieveCommand;
+    private String recieveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +99,9 @@ public class ProcedureActivity extends AppCompatActivity
         // ボタン(固定)へリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
         findViewById(R.id.site_difference_button).setOnClickListener(this);
+
+        this.recieveCommand = resultArr[0];
+        this.recieveData = resultArr[1];
 
         // 現場差異の確認待機時はポップアップ再現
         String cdGsmodeTemp = "";
@@ -329,8 +337,8 @@ public class ProcedureActivity extends AppCompatActivity
             recieveFragment.closeServer();
             // 次の画面へ遷移
             Intent intent = new Intent(this, TopActivity.class);
-            Intent pI = getIntent();
-            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
+            String resultStTmp = this.recieveCommand + "@" + this.recieveData;
+            intent.putExtra("resultStTmp", resultStTmp);
             startActivity(intent);
         }
     }
@@ -353,7 +361,36 @@ public class ProcedureActivity extends AppCompatActivity
         // 本コールバックでの描画処理はエラーになる
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
 
-            System.out.println("CLICK!:" + data);
+            // 手順JSONの状態を変更
+            try {
+                JSONObject rData = new JSONObject(this.recieveData);
+                JSONArray tejun = rData.getJSONArray("tejun");
+
+                // 確認された手順を確認済に変更
+                int currentPos = mProcFragment.getCurrentPos();
+                JSONObject targetTejun = (JSONObject) tejun.get(currentPos);
+                targetTejun.put("cd_status", "7"); // 確認済に変更
+                String tsB = dsHelper.getRecievedData().getString("ts_b");
+                targetTejun.put("ts_b", tsB);
+                tejun.put(currentPos, targetTejun);
+
+                // 現在の手順を進める
+                int nextPos = currentPos + 1;
+                JSONObject nextTejun = (JSONObject) tejun.get(nextPos);
+                while(nextTejun.getString("tx_sno").equals("C")){
+                    nextPos++;
+                    nextTejun = (JSONObject) tejun.get(nextPos);
+                }
+                nextTejun.put("cd_status", "1");
+                tejun.put(nextPos, nextTejun);
+
+                rData.put("tejun", tejun);
+                this.recieveData = rData.toString() + "$";  // "$"はこのタイミングでないと、本画面に戻ってきた時に増えてしまう
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
