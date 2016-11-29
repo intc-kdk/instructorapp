@@ -4,19 +4,6 @@
     android:id="@+id/TableRow"
     android:background="@color/colorTextBlack">
 
-<!--    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginRight="1dp"
-        android:orientation="horizontal">-->
-
-<!--    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginRight="1dp">-->
-
     <TextView
         android:text="No"
         android:layout_width="wrap_content"
@@ -30,8 +17,6 @@
         android:width="26dp"
         android:gravity="center"
         android:padding="2dp" />
-
-<!--    </FrameLayout>-->
 
     <TextView
         android:text="場所"
@@ -123,7 +108,5 @@
         android:layout_marginRight="1dp"
         android:width="36dp"
         android:padding="2dp" />
-
-<!--    </LinearLayout>-->
 
 </TableRow>
