@@ -20,6 +20,8 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
 
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
+    private TransmissionFragment sendFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,7 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
         if (id == R.id.ok_button) {
 
             // Fragmentを利用した通信の準備
-            TransmissionFragment sendFragment = TransmissionFragment.newInstance();
+            sendFragment = TransmissionFragment.newInstance();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(sendFragment, TAG_TRANS);
@@ -47,13 +49,6 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
             DataStructureUtil dataStructureHelper = new DataStructureUtil();
             String data = dataStructureHelper.makeSendData("17","");
             sendFragment.send(data);
-/*
-            // デバッグ用の仮遷移処理
-            Intent intent = new Intent(this, ProcedureActivity.class);
-            Intent pI = getIntent();
-            intent.putExtra("resultStTmp", pI.getStringExtra("resultStTmp"));
-            startActivity(intent);
-*/
         }
     }
 
@@ -78,11 +73,9 @@ public class ConfirmActivity extends FragmentActivity implements View.OnClickLis
             startActivity(intent);
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
-            System.out.println("※※※※　受信エラー ※※※"+data);
-            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, sendFragment, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
-            System.out.println("※※※※　受信タイムアウト ※※※" + data);
-            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title), getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, sendFragment, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }
     }
 

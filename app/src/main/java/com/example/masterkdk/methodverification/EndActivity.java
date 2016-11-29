@@ -19,6 +19,8 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
 
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
+    private TransmissionFragment sendFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,7 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             // 全てのタブレットを終了する
 
             // Fragmentを利用した通信の準備
-            TransmissionFragment sendFragment = TransmissionFragment.newInstance();
+            sendFragment = TransmissionFragment.newInstance();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(sendFragment, TAG_TRANS);
@@ -80,11 +82,9 @@ public class EndActivity extends FragmentActivity implements View.OnClickListene
             startActivity(intent);
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
-            System.out.println("※※※※　受信エラー ※※※"+data);
-            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, sendFragment, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
-            System.out.println("※※※※　受信タイムアウト ※※※" + data);
-            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title), getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, sendFragment, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }
     }
 

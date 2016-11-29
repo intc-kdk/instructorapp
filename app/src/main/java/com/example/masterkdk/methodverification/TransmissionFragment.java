@@ -28,6 +28,7 @@ public class TransmissionFragment extends Fragment implements LoaderManager.Load
     private String localHost;
     private int localPort;
 
+    private String preSendData = "";
     private TransmissionFragmentListener mListener;
 
     public TransmissionFragment() {
@@ -113,6 +114,8 @@ public class TransmissionFragment extends Fragment implements LoaderManager.Load
 
     public void send(String data){
         if(data != null) {
+            // 送信データを再送用に退避する
+            preSendData=data;
             Bundle args = new Bundle();
             args.putString("Data",data);
             args.putString("Host",mHost);
@@ -131,7 +134,10 @@ public class TransmissionFragment extends Fragment implements LoaderManager.Load
             getLoaderManager().restartLoader(1, args, this);  // onCreateLoaderが呼ばれる
         }
     }
-
+    public void resend(){
+        // 退避したデータで再送する
+        send(preSendData);
+    }
     /**
 
      */
