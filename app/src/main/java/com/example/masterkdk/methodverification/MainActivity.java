@@ -17,6 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.masterkdk.methodverification.Util.DataStructureUtil;
 import com.example.masterkdk.methodverification.Util.alertDialogUtil;
 
+import java.util.Iterator;
+
 
 public class MainActivity extends AppCompatActivity
         implements OnClickListener, TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener {
@@ -30,11 +32,18 @@ public class MainActivity extends AppCompatActivity
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
 
+    private String dtKakunin;   // 55@退避変数
+    private String dtGenbasai;  // 56@退避変数
+
     private String nextActivity = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //退避エリアを初期化
+        dtKakunin = "";
+        dtGenbasai = "";
 
         // 通信準備
         sendFragment = TransmissionFragment.newInstance();
@@ -163,6 +172,15 @@ public class MainActivity extends AppCompatActivity
                 // 手順を受信したので画面遷移を許可
                 this.transOk = true;
 
+                // 最新の情報を受信したので、退避データは削除
+                dtKakunin = "";
+                dtGenbasai = "";
+                if( searchIntent(getIntent().getExtras(), "dtKakunin")){
+                    getIntent().removeExtra("dtKakunin");
+                }
+                if( searchIntent(getIntent().getExtras(), "dtGenbasai")){
+                    getIntent().removeExtra("dtGenbasai");
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -182,10 +200,42 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, ConfirmActivity.class);
             }
             intent.putExtra("resultStTmp", resultStTmp);
+
+            Intent pI = getIntent(); // 引き継ぎデータ
+            if(!dtKakunin.isEmpty()){
+                // 確認時刻を受信済みの場合、Intentへ設定 ※ この画面での受信（最新）を優先する
+                intent.putExtra("dtKakunin", dtKakunin);
+            }else{
+                // 引き継いだIntentに確認時刻を受信が設定済みの場合
+                if( searchIntent(pI.getExtras(), "dtKakunin")){
+                    intent.putExtra("dtKakunin", pI.getStringExtra("dtKakunin"));
+                }
+            }
+            if(!dtGenbasai.isEmpty()){
+                // 現場差異応答を受信済みの場合、Intentへ設定
+                intent.putExtra("dtGenbasai", dtGenbasai);
+            }else {
+                // 引き継いだIntentに現場差異応答を受信が設定済みの場合
+                if (searchIntent(pI.getExtras(),"dtGenbasai")) {
+                    intent.putExtra("dtGenbasai", pI.getStringExtra("dtGenbasai"));
+                }
+            }
             startActivity(intent);
         }
     }
-
+    private boolean searchIntent(Bundle bd, String key){
+        // インテントに該当のキーがあるか確認する
+        if (bd != null) {
+            Iterator<?> iterator = bd.keySet().iterator();
+            while (iterator.hasNext()) {
+                String inKey = (String) iterator.next();
+                if(inKey.equals(key)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     @Override
     public void onFinishTransmission(String data){
         // インターフェイス利用に必要なオーバーライド
@@ -204,6 +254,10 @@ public class MainActivity extends AppCompatActivity
         if(cmd.equals("57")) { // 盤タブレットの設置状況が更新された
             // 非同期処理と表示更新のタイミングの都合により、実際の処理はonFinishRecieveProgressで行う
             System.out.println("CLICK!:" + data);
+            mData = dsHelper.makeSendData("50", "");
+        } else if(cmd.equals("55")) { // 確認時刻受信
+            mData = dsHelper.makeSendData("50","");
+        }else if(cmd.equals("56")) { // 現場差異応答
             mData = dsHelper.makeSendData("50","");
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
             mData = "";
@@ -259,7 +313,12 @@ public class MainActivity extends AppCompatActivity
             }
 
             recieveFragment.listen();  // サーバーからの指示を待機
-
+        }else if(cmd.equals("55")) { // 確認時刻受信
+            dtKakunin = data;  // データを退避
+            recieveFragment.listen(); // 受信待機を継続する
+        }else if(cmd.equals("56")) { // 現場差異応答
+            dtGenbasai=data;   // データを退避
+            recieveFragment.listen(); // 受信待機を継続する
         } else if (cmd.equals("91")) {  // 受信エラー処理
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
             //想定外コマンドの時も受信待機は継続

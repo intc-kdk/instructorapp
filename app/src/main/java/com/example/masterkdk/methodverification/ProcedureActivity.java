@@ -25,6 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Iterator;
+
 import static com.example.masterkdk.methodverification.R.layout.popup_layout;
 
 
@@ -85,6 +87,7 @@ public class ProcedureActivity extends AppCompatActivity
         try {
             JSONObject jsonObj = new JSONObject(resultArr[1]);
             cdStatus = jsonObj.getJSONObject("t_sno").getString("cd_status");
+            System.out.println("!!!!!!!!!!!!!!!!!"+jsonObj.getJSONObject("t_sno").toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -133,8 +136,63 @@ public class ProcedureActivity extends AppCompatActivity
                 }
             }
         });
-    }
 
+        // メニュー、確認画面での受信を反映
+
+        if( searchIntent(intnt.getExtras(),"dtKakunin")){
+            // 引き継いだIntentに確認時刻を受信が設定済みの場合
+            String data = intnt.getStringExtra("dtKakunin");
+            DataStructureUtil dsHelper = new DataStructureUtil();
+            dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。
+            // 手順JSONの状態を変更
+            updateJSON(dsHelper.getRecievedData());
+            // 確認者タブレットで確認後の描画処理
+            recieveKakunin(dsHelper.getRecievedData());
+        }
+
+        if( searchIntent(intnt.getExtras(),"dtGenbasai")){
+            // 引き継いだIntentに現場差異応答を受信が設定済みの場合
+            // 確認待機中の場合もあるので元の背景色に戻す
+            Resources resources = getResources();
+            int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+            View wrapProcedure = findViewById(R.id.WrapProcedure);
+            wrapProcedure.setBackgroundColor(instructDisplayColor);
+
+            int position = mProcFragment.getCurrentPos();
+            String tx_gs = "";
+            String status = "";
+            // cdGsmode スキップは"5", 追加は "6"
+            if(cdGsmode.equals("5")){
+                status="7";
+                tx_gs="スキップ";
+            }else if(cdGsmode.equals("7")){
+                status="1";
+                tx_gs="追加";
+            }
+
+            mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
+
+            if(cdGsmode.equals("5")) {  // SKIP
+                mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
+            }else{
+                mProcFragment.addProcedure();   // 追加はそのままの手順
+            }
+
+        }
+    }
+    private boolean searchIntent(Bundle bd, String key){
+        // インテントに該当のキーがあるか確認する
+        if (bd != null) {
+            Iterator<?> iterator = bd.keySet().iterator();
+            while (iterator.hasNext()) {
+                String inKey = (String) iterator.next();
+                if(inKey.equals(key)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -358,36 +416,8 @@ public class ProcedureActivity extends AppCompatActivity
 
         // 本コールバックでの描画処理はエラーになる
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
-
             // 手順JSONの状態を変更
-            try {
-                JSONObject rData = new JSONObject(this.recieveData);
-                JSONArray tejun = rData.getJSONArray("tejun");
-
-                // 確認された手順を確認済に変更
-                int currentPos = mProcFragment.getCurrentPos();
-                JSONObject targetTejun = (JSONObject) tejun.get(currentPos);
-                targetTejun.put("cd_status", "7"); // 確認済に変更
-                String tsB = dsHelper.getRecievedData().getString("ts_b");
-                targetTejun.put("ts_b", tsB);
-                tejun.put(currentPos, targetTejun);
-
-                // 現在の手順を進める
-                int nextPos = currentPos + 1;
-                JSONObject nextTejun = (JSONObject) tejun.get(nextPos);
-                while(nextTejun.getString("tx_sno").equals("C")){
-                    nextPos++;
-                    nextTejun = (JSONObject) tejun.get(nextPos);
-                }
-                nextTejun.put("cd_status", "1");
-                tejun.put(nextPos, nextTejun);
-
-                rData.put("tejun", tejun);
-                this.recieveData = rData.toString() + "$";  // "$"はこのタイミングでないと、本画面に戻ってきた時に増えてしまう
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            updateJSON(dsHelper.getRecievedData());
 
             mData = dsHelper.makeSendData("50", "");
 
@@ -412,8 +442,8 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
-        if(cmd.equals("55")) { // 確認者タブレットで確認後の描画処理
-            // 確認待機中の着色の解除
+        if(cmd.equals("55")) {
+            // 確認者タブレットで確認後の描画処理
             Resources resources = getResources();
             int instructDisplayColor = resources.getColor(R.color.colorBackGround);
             View wrapProcedure = findViewById(R.id.WrapProcedure);
@@ -485,6 +515,68 @@ public class ProcedureActivity extends AppCompatActivity
         } else {
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
+        }
+    }
+
+    private void updateJSON(Bundle bdData){
+        // 手順JSONの状態を変更
+        try {
+            JSONObject rData = new JSONObject(this.recieveData);
+            JSONArray tejun = rData.getJSONArray("tejun");
+
+            // 確認された手順を確認済に変更
+            int currentPos = mProcFragment.getCurrentPos();
+            JSONObject targetTejun = (JSONObject) tejun.get(currentPos);
+            targetTejun.put("cd_status", "7"); // 確認済に変更
+            String tsB = bdData.getString("ts_b");
+            targetTejun.put("ts_b", tsB);
+            tejun.put(currentPos, targetTejun);
+
+            // 現在の手順を進める
+            int nextPos = currentPos + 1;
+            JSONObject nextTejun = (JSONObject) tejun.get(nextPos);
+            while(nextTejun.getString("tx_sno").equals("C")){
+                nextTejun.put("cd_status", "7"); // コメントは実行済みにする
+                tejun.put(nextPos, nextTejun);
+                nextPos++;
+                nextTejun = (JSONObject) tejun.get(nextPos);
+            }
+            tejun.put(nextPos, nextTejun);
+
+            rData.put("tejun", tejun);
+
+            // 画面全体の着色を戻す
+            JSONObject t_sno = rData.getJSONObject("t_sno");
+            t_sno.put("cd_status","0");
+
+            this.recieveData = rData.toString() + "$";  // "$"はこのタイミングでないと、本画面に戻ってきた時に増えてしまう
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    private void recieveKakunin(Bundle bdData){
+        Resources resources = getResources();
+        int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+        View wrapProcedure = findViewById(R.id.WrapProcedure);
+        wrapProcedure.setBackgroundColor(instructDisplayColor);
+
+        // 手順の表示を更新
+        int position = mProcFragment.getCurrentPos();
+        int lastInSno = mProcFragment.getLastInSno();
+        int currentInSno = mProcFragment.getCurrentInSno();
+        ProcItem item = mProcFragment.getCurrentItem(); // 現在の手順の行を取得
+        String[] arrDate = bdData.getString("ts_b").split(" ");
+
+        mProcFragment.setProcStatus(position, "7", arrDate[1], item.bo_gs, item.tx_gs);  //  bo_gs、tx_gs は更新済みの行から値を設定
+
+        if (lastInSno != currentInSno) {
+            // 手順を進める
+            mProcFragment.updateProcedure();
+        } else {
+            // 手順終了後は手順書終了画面へ遷移
+            Intent intent = new Intent(this, ProcedureEndActivity.class);
+            startActivity(intent);
         }
     }
 }
