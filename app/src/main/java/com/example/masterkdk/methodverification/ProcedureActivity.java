@@ -364,6 +364,18 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.in_sno + "\"}");
         sendFragment.send(data);
+
+        try {
+            // 画面全体の着色をJSONへ反映
+            JSONObject rData = new JSONObject(this.recieveData);
+            JSONObject t_sno = rData.getJSONObject("t_sno");
+            t_sno.put("cd_status","1");
+
+            this.recieveData = rData.toString() + "$";  // "$"はこのタイミングでないと、本画面に戻ってきた時に増えてしまう
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /* 応答受信 */
