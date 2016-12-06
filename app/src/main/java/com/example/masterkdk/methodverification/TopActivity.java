@@ -97,7 +97,7 @@ System.out.println("スタート");
             }else if(nextActivity.equals("end")){   //  終了画面
                 intent = new Intent(this, EndActivity.class);
             }else if(nextActivity.equals("conf")){  // 設置状況、手順一覧
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, StatusActivity.class);
             }
 
             Intent pI = getIntent();

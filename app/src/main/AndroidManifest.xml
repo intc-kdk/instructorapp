@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".StatusActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.STATUS" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ProcedureActivity">
             <intent-filter>
                 <action android:name="android.intent.action.PROCEDURE" />
