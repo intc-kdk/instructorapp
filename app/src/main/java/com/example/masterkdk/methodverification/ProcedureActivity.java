@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -25,12 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-
 import static com.example.masterkdk.methodverification.R.layout.popup_layout;
 
 
-//import java.util.List;
 /*
  *  K-02 手順書画面
 */
@@ -136,63 +132,8 @@ public class ProcedureActivity extends AppCompatActivity
                 }
             }
         });
-
-        // メニュー、確認画面での受信を反映
-
-        if( searchIntent(intnt.getExtras(),"dtKakunin")){
-            // 引き継いだIntentに確認時刻を受信が設定済みの場合
-            String data = intnt.getStringExtra("dtKakunin");
-            DataStructureUtil dsHelper = new DataStructureUtil();
-            dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。
-            // 手順JSONの状態を変更
-            updateJSON(dsHelper.getRecievedData());
-            // 確認者タブレットで確認後の描画処理
-            recieveKakunin(dsHelper.getRecievedData());
-        }
-
-        if( searchIntent(intnt.getExtras(),"dtGenbasai")){
-            // 引き継いだIntentに現場差異応答を受信が設定済みの場合
-            // 確認待機中の場合もあるので元の背景色に戻す
-            Resources resources = getResources();
-            int instructDisplayColor = resources.getColor(R.color.colorBackGround);
-            View wrapProcedure = findViewById(R.id.WrapProcedure);
-            wrapProcedure.setBackgroundColor(instructDisplayColor);
-
-            int position = mProcFragment.getCurrentPos();
-            String tx_gs = "";
-            String status = "";
-            // cdGsmode スキップは"5", 追加は "6"
-            if(cdGsmode.equals("5")){
-                status="7";
-                tx_gs="スキップ";
-            }else if(cdGsmode.equals("7")){
-                status="1";
-                tx_gs="追加";
-            }
-
-            mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
-
-            if(cdGsmode.equals("5")) {  // SKIP
-                mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
-            }else{
-                mProcFragment.addProcedure();   // 追加はそのままの手順
-            }
-
-        }
     }
-    private boolean searchIntent(Bundle bd, String key){
-        // インテントに該当のキーがあるか確認する
-        if (bd != null) {
-            Iterator<?> iterator = bd.keySet().iterator();
-            while (iterator.hasNext()) {
-                String inKey = (String) iterator.next();
-                if(inKey.equals(key)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -364,18 +305,6 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.in_sno + "\"}");
         sendFragment.send(data);
-
-        try {
-            // 画面全体の着色をJSONへ反映
-            JSONObject rData = new JSONObject(this.recieveData);
-            JSONObject t_sno = rData.getJSONObject("t_sno");
-            t_sno.put("cd_status","1");
-
-            this.recieveData = rData.toString() + "$";  // "$"はこのタイミングでないと、本画面に戻ってきた時に増えてしまう
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     /* 応答受信 */

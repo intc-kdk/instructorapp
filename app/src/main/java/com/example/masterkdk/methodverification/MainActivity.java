@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 
         if (cmd.equals("51")) { //起動応答
             Intent intent = new Intent(this, StatusActivity.class);
-            intent.putExtra("responseData", data);
+            intent.putExtra("resultStTmp", data);
             startActivity(intent);
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※"+data);
@@ -69,6 +69,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFinishTransmission(String data){
-        // 行う処理は無いが、implementsに必要なfunction
+        // インターフェイス利用に必要なオーバーライド
     }
 }
