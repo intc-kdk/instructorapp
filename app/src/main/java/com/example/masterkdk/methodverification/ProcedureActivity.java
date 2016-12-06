@@ -141,6 +141,7 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     // ボタン(固定)クリック時詳細処理
+    private boolean buttonLock = false;  // ボタンをロックするフラグ
     @Override
     public void onClick(View v) {
 
@@ -158,7 +159,7 @@ public class ProcedureActivity extends AppCompatActivity
 
             this.onClickSiteDiffButton(v);
 
-        } else if (id == R.id.return_button) {    // MENUへ戻るボタン
+        } else if (id == R.id.return_button && !buttonLock) {  // MENUへ戻るボタン 確認待機中は遷移させない
             // Activity遷移前にrecieveFragment停止
             sendFragment.halt("99@$");
         }
@@ -286,10 +287,7 @@ public class ProcedureActivity extends AppCompatActivity
         }
     }
     @Override
-    public void onListItemClick(ProcItem item){
-
-        // 指示ボタンタップ時の詳細処理
-        System.out.println("CLICK!:"+item.in_sno);
+    public void onListItemClick(ProcItem item){  // 指示ボタンタップ時の詳細処理
 
         // ヘッダへの値表示(No、盤・機器名、指示名)
         TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
@@ -305,6 +303,8 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String data = dsHelper.makeSendData("13","{\"手順書番号\":\"" + item.in_sno + "\"}");
         sendFragment.send(data);
+
+        this.buttonLock = true;
     }
 
     /* 応答受信 */
@@ -322,7 +322,6 @@ public class ProcedureActivity extends AppCompatActivity
             int instructDisplayColor = resources.getColor(R.color.colorInstructDisplay);
             View wrapProcedure = findViewById(R.id.WrapProcedure);
             wrapProcedure.setBackgroundColor(instructDisplayColor);
-            // ボタンの無効化はRecyclerViewAdapterで行う
         }else if(cmd.equals("50")){
             // do nothing
         } else if (cmd.equals("91")) {  // 受信エラー処理
@@ -408,6 +407,8 @@ public class ProcedureActivity extends AppCompatActivity
                 Intent intent = new Intent(this, ProcedureEndActivity.class);
                 startActivity(intent);
             }
+
+            this.buttonLock = false;
 
         } else if(cmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 
