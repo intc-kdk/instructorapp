@@ -143,6 +143,7 @@ public class ProcedureActivity extends AppCompatActivity
 
     // ボタン(固定)クリック時詳細処理
     private boolean buttonLock = false;  // ボタンをロックするフラグ
+    private boolean updateButtonLock = false;  // 画面更新ボタンをロックするフラグ
     @Override
     public void onClick(View v) {
 
@@ -163,10 +164,9 @@ public class ProcedureActivity extends AppCompatActivity
         } else if (id == R.id.return_button && !buttonLock) {  // MENUへ戻るボタン 確認待機中は遷移させない
             // Activity遷移前にrecieveFragment停止
             sendFragment.halt("99@$");
-        } else if (id == R.id.procedure_update_button) {  // 画面更新ボタン
-//        } else if (id == R.id.procedure_update_button && !buttonLock) {  // 画面更新ボタン
+        } else if (id == R.id.procedure_update_button && !updateButtonLock) {  // 画面更新ボタン
             sendFragment.send("90@$");
-//            buttonLock = true;
+            this.updateButtonLock = true;
         }
     }
 
@@ -315,7 +315,7 @@ public class ProcedureActivity extends AppCompatActivity
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
-        // TODO: [P] ログを取得
+
         System.out.println("CLICK!:" + data);
 
         DataStructureUtil dsHelper = new DataStructureUtil();
@@ -342,9 +342,9 @@ public class ProcedureActivity extends AppCompatActivity
             intent.putExtra("resultStTmp", resultStTmp);
             startActivity(intent);
         } else if (cmd.equals("9N")) {  // 画面更新（正常）
-            // 受信待機済みのため 何もしない
+            this.updateButtonLock = false;
         } else if (cmd.equals("9Q")) {  // 画面更新（異常）
-//            this.buttonLock = false;
+            this.updateButtonLock = false;
         }
     }
 

@@ -133,6 +133,7 @@ public class StatusActivity extends AppCompatActivity
     }
 
     // ボタンクリック時詳細処理
+    private boolean updateButtonLock = false;  // 画面更新ボタンをロックするフラグ
     @Override
     public void onClick(View v){
 
@@ -144,8 +145,9 @@ public class StatusActivity extends AppCompatActivity
         } else if (id == R.id.start_button) {
             nextActivity="conf";
             sendFragment.halt("99@$");
-        } else if (id == R.id.update_button) {
+        } else if (id == R.id.update_button && !updateButtonLock) {
             sendFragment.send("90@$");
+            this.updateButtonLock = true;
         }
     }
 
@@ -176,9 +178,9 @@ public class StatusActivity extends AppCompatActivity
 
             startActivity(intent);
         } else if (cmd.equals("9N")) {  // 画面更新（正常）
-            // 受信待機済みのため 何もしない
+            this.updateButtonLock = false;
         } else if (cmd.equals("9Q")) {  // 画面更新（異常）
-            // 受信待機済みのため 何もしない
+            this.updateButtonLock = false;
         }
     }
 
