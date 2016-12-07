@@ -170,4 +170,15 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="画面\n更新"
+        android:id="@+id/update_button"
+        android:textSize="35sp"
+        style="@style/S01YellowButton"
+        android:layout_alignTop="@+id/menu_button"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="11dp" />
+
 </RelativeLayout>

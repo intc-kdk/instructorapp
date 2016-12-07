@@ -98,6 +98,7 @@ public class ProcedureActivity extends AppCompatActivity
         // ボタン(固定)へリスナを登録
         findViewById(R.id.return_button).setOnClickListener(this);
         findViewById(R.id.site_difference_button).setOnClickListener(this);
+        findViewById(R.id.procedure_update_button).setOnClickListener(this);
 
         this.recieveCommand = resultArr[0];
         this.recieveData = resultArr[1];
@@ -162,6 +163,8 @@ public class ProcedureActivity extends AppCompatActivity
         } else if (id == R.id.return_button && !buttonLock) {  // MENUへ戻るボタン 確認待機中は遷移させない
             // Activity遷移前にrecieveFragment停止
             sendFragment.halt("99@$");
+        } else if (id == R.id.procedure_update_button) {  // 画面更新ボタン
+            sendFragment.send("90@$");
         }
     }
 
@@ -336,6 +339,10 @@ public class ProcedureActivity extends AppCompatActivity
             String resultStTmp = this.recieveCommand + "@" + this.recieveData;
             intent.putExtra("resultStTmp", resultStTmp);
             startActivity(intent);
+        } else if (cmd.equals("9N")) {  // 画面更新（正常）
+            // 受信待機済みのため 何もしない
+        } else if (cmd.equals("9Q")) {  // 画面更新（異常）
+            // 受信待機済みのため 何もしない
         }
     }
 
@@ -362,7 +369,11 @@ public class ProcedureActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
+            // 手順JSONの状態を変更
+//            updateJSON(dsHelper.getRecievedData());
+
             mData = dsHelper.makeSendData("50", "");
+
         } else if(cmd.equals("57")) { // 盤タブレットの設置状況が変化した
             mData = dsHelper.makeSendData("50", "");
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理

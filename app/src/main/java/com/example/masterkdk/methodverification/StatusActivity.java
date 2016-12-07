@@ -51,6 +51,7 @@ public class StatusActivity extends AppCompatActivity
 
         // ボタンへリスナを登録
         findViewById(R.id.menu_button).setOnClickListener(this);
+        findViewById(R.id.update_button).setOnClickListener(this);
         findViewById(R.id.start_button).setOnClickListener(this);
 
         Intent intnt = getIntent();
@@ -139,12 +140,13 @@ public class StatusActivity extends AppCompatActivity
         int id = v.getId();
         if (id == R.id.menu_button) {
             nextActivity="top";
+            sendFragment.halt("99@$");
         } else if (id == R.id.start_button) {
             nextActivity="conf";
+            sendFragment.halt("99@$");
+        } else if (id == R.id.update_button) {
+            sendFragment.send("90@$");
         }
-
-        // Activity遷移前にrecieveFragment停止
-        sendFragment.halt("99@$");
     }
 
     /* 応答受信 */
@@ -173,6 +175,10 @@ public class StatusActivity extends AppCompatActivity
             intent.putExtra("resultStTmp", resultStTmp);
 
             startActivity(intent);
+        } else if (cmd.equals("9N")) {  // 画面更新（正常）
+            // 受信待機済みのため 何もしない
+        } else if (cmd.equals("9Q")) {  // 画面更新（異常）
+            // 受信待機済みのため 何もしない
         }
     }
 
