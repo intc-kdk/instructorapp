@@ -164,7 +164,9 @@ public class ProcedureActivity extends AppCompatActivity
             // Activity遷移前にrecieveFragment停止
             sendFragment.halt("99@$");
         } else if (id == R.id.procedure_update_button) {  // 画面更新ボタン
+//        } else if (id == R.id.procedure_update_button && !buttonLock) {  // 画面更新ボタン
             sendFragment.send("90@$");
+//            buttonLock = true;
         }
     }
 
@@ -342,7 +344,7 @@ public class ProcedureActivity extends AppCompatActivity
         } else if (cmd.equals("9N")) {  // 画面更新（正常）
             // 受信待機済みのため 何もしない
         } else if (cmd.equals("9Q")) {  // 画面更新（異常）
-            // 受信待機済みのため 何もしない
+//            this.buttonLock = false;
         }
     }
 
@@ -370,7 +372,7 @@ public class ProcedureActivity extends AppCompatActivity
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
             // 手順JSONの状態を変更
-//            updateJSON(dsHelper.getRecievedData());
+            updateJSON(dsHelper.getRecievedData());
 
             mData = dsHelper.makeSendData("50", "");
 
@@ -481,8 +483,17 @@ public class ProcedureActivity extends AppCompatActivity
             int currentPos = mProcFragment.getCurrentPos();
             JSONObject targetTejun = (JSONObject) tejun.get(currentPos);
             targetTejun.put("cd_status", "7"); // 確認済に変更
-            String tsB = bdData.getString("ts_b");
-            targetTejun.put("ts_b", tsB);
+            if (this.diffFlag == 0) {
+                String tsB = bdData.getString("ts_b");  // 現場差異無しの場合
+                targetTejun.put("ts_b", tsB);
+            } else {
+                targetTejun.put("bo_gs", "True");  // 現場差異有りの場合
+                if (this.diffFlag == 1) {
+                    targetTejun.put("tx_gs", "スキップ");
+                } else {
+                    targetTejun.put("tx_gs", "追加");
+                }
+            }
             tejun.put(currentPos, targetTejun);
 
             // 現在の手順を進める
