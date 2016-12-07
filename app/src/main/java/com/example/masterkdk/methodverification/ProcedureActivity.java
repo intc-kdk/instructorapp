@@ -291,6 +291,8 @@ public class ProcedureActivity extends AppCompatActivity
             tvRemarks.setText(rcBundle.getString("tx_biko"));
         }
     }
+
+    private int setOrderStatus = 0;
     @Override
     public void onListItemClick(ProcItem item){  // 指示ボタンタップ時の詳細処理
 
@@ -310,6 +312,7 @@ public class ProcedureActivity extends AppCompatActivity
         sendFragment.send(data);
 
         this.buttonLock = true;
+        this.setOrderStatus = 1;
     }
 
     /* 応答受信 */
@@ -365,15 +368,15 @@ public class ProcedureActivity extends AppCompatActivity
 
         // 本コールバックでの描画処理はエラーになる
         if(cmd.equals("55")) { // 確認者タブレットで手順が確認された
-            // 手順JSONの状態を変更
-            updateJSON(dsHelper.getRecievedData());
-
+            if(this.setOrderStatus == 1){  // 確認待機中でなければ処理させない
+                updateJSON(dsHelper.getRecievedData());  // 手順JSONの状態を変更
+            }
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
-            // 手順JSONの状態を変更
-            updateJSON(dsHelper.getRecievedData());
-
+            if(this.diffFlag != 0) {  // 現場差異の発令がなければ処理させない
+                updateJSON(dsHelper.getRecievedData());  // 手順JSONの状態を変更
+            }
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("57")) { // 盤タブレットの設置状況が変化した
@@ -396,65 +399,68 @@ public class ProcedureActivity extends AppCompatActivity
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
         if(cmd.equals("55")) {
-            // 確認者タブレットで確認後の描画処理
-            Resources resources = getResources();
-            int instructDisplayColor = resources.getColor(R.color.colorBackGround);
-            View wrapProcedure = findViewById(R.id.WrapProcedure);
-            wrapProcedure.setBackgroundColor(instructDisplayColor);
+            if(this.setOrderStatus == 1){
+                // 確認者タブレットで確認後の描画処理
+                Resources resources = getResources();
+                int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+                View wrapProcedure = findViewById(R.id.WrapProcedure);
+                wrapProcedure.setBackgroundColor(instructDisplayColor);
 
-            // 手順の表示を更新
-            int position = mProcFragment.getCurrentPos();
-            int lastInSno = mProcFragment.getLastInSno();
-            int currentInSno = mProcFragment.getCurrentInSno();
-            ProcItem item = mProcFragment.getCurrentItem(); // 現在の手順の行を取得
-            String[] arrDate = dsHelper.getRecievedData().getString("ts_b").split(" ");
+                // 手順の表示を更新
+                int position = mProcFragment.getCurrentPos();
+                int lastInSno = mProcFragment.getLastInSno();
+                int currentInSno = mProcFragment.getCurrentInSno();
+                ProcItem item = mProcFragment.getCurrentItem(); // 現在の手順の行を取得
+                String[] arrDate = dsHelper.getRecievedData().getString("ts_b").split(" ");
 
-            mProcFragment.setProcStatus(position, "7", arrDate[1], item.bo_gs, item.tx_gs);  //  bo_gs、tx_gs は更新済みの行から値を設定
+                mProcFragment.setProcStatus(position, "7", arrDate[1], item.bo_gs, item.tx_gs);  //  bo_gs、tx_gs は更新済みの行から値を設定
 
-            if (lastInSno != currentInSno) {
-                // 手順を進める
-                mProcFragment.updateProcedure();
-                recieveFragment.listen();  // サーバーからの指示を待機
-            } else {
-                // 手順終了後は手順書終了画面へ遷移
-                Intent intent = new Intent(this, ProcedureEndActivity.class);
-                startActivity(intent);
+                if (lastInSno != currentInSno) {
+                    // 手順を進める
+                    mProcFragment.updateProcedure();
+                    recieveFragment.listen();  // サーバーからの指示を待機
+                } else {
+                    // 手順終了後は手順書終了画面へ遷移
+                    Intent intent = new Intent(this, ProcedureEndActivity.class);
+                    startActivity(intent);
+                }
+
+                this.buttonLock = false;
+                this.setOrderStatus = 0;
             }
-
-            this.buttonLock = false;
 
         } else if(cmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
+            if(this.diffFlag != 0) {
+                // 確認待機中の場合もあるので元の背景色に戻す
+                Resources resources = getResources();
+                int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+                View wrapProcedure = findViewById(R.id.WrapProcedure);
+                wrapProcedure.setBackgroundColor(instructDisplayColor);
 
-            // 確認待機中の場合もあるので元の背景色に戻す
-            Resources resources = getResources();
-            int instructDisplayColor = resources.getColor(R.color.colorBackGround);
-            View wrapProcedure = findViewById(R.id.WrapProcedure);
-            wrapProcedure.setBackgroundColor(instructDisplayColor);
+                int position = mProcFragment.getCurrentPos();
+                String tx_gs = "";
+                String status = "";
+                // cd_status スキップは"7", 追加は "1"
+                if (diffFlag == 1) {
+                    status = "7";
+                    tx_gs = "スキップ";
+                } else if (diffFlag == 2) {
+                    status = "1";
+                    tx_gs = "追加";
+                }
 
-            int position = mProcFragment.getCurrentPos();
-            String tx_gs = "";
-            String status = "";
-            // cd_status スキップは"7", 追加は "1"
-            if(diffFlag == 1){
-                status="7";
-                tx_gs="スキップ";
-            }else if(diffFlag == 2){
-                status="1";
-                tx_gs="追加";
+                mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
+
+                if (diffFlag == 1) {  // SKIP
+                    mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
+                } else {
+                    mProcFragment.addProcedure();   // 追加はそのままの手順
+                }
+
+                diffFlag = 0;
+                mPopupWindow.dismiss();  // ポップアップを閉じる
+                recieveFragment.listen();  // サーバーからの指示を待機
             }
-
-            mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
-
-            if(diffFlag == 1) {  // SKIP
-                mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
-            }else{
-                mProcFragment.addProcedure();   // 追加はそのままの手順
-            }
-
-            diffFlag = 0;
-            // ポップアップを閉じる
-            mPopupWindow.dismiss();
-            recieveFragment.listen();  // サーバーからの指示を待機
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
