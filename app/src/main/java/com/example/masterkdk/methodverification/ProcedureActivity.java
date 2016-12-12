@@ -176,6 +176,7 @@ public class ProcedureActivity extends AppCompatActivity
 
     public void onClickSiteDiffButton(View v) {
 
+        this.diffFlag = 0;  // 現場差異フラグの初期化は、キャンセル後の確認の受信に備えて、ポップアップ表示時に行う
         mPopupWindow = new PopupWindow(ProcedureActivity.this);
 
         // レイアウト設定
@@ -262,7 +263,6 @@ public class ProcedureActivity extends AppCompatActivity
                     String data = dsHelper.makeSendData("14", commandString);
                     sendFragment.send(data);
                 }
-                diffFlag = 0;
 
                 // ボタン表示切替
                 Button siteDiffButton = (Button) findViewById(R.id.site_difference_button);
@@ -374,9 +374,9 @@ public class ProcedureActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
-            if(this.diffFlag != 0) {  // 現場差異の発令がなければ処理させない
+//            if(this.diffFlag != 0) {  // 現場差異の発令がなければ処理させない=>キャンセル後に確認を受信する可能性がある
                 updateJSON(dsHelper.getRecievedData());  // 手順JSONの状態を変更
-            }
+//            }
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("57")) { // 盤タブレットの設置状況が変化した
@@ -430,7 +430,7 @@ public class ProcedureActivity extends AppCompatActivity
             }
 
         } else if(cmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
-            if(this.diffFlag != 0) {
+//            if(this.diffFlag != 0) {
                 // 確認待機中の場合もあるので元の背景色に戻す
                 Resources resources = getResources();
                 int instructDisplayColor = resources.getColor(R.color.colorBackGround);
@@ -460,7 +460,7 @@ public class ProcedureActivity extends AppCompatActivity
                 diffFlag = 0;
                 mPopupWindow.dismiss();  // ポップアップを閉じる
                 recieveFragment.listen();  // サーバーからの指示を待機
-            }
+//            }
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
