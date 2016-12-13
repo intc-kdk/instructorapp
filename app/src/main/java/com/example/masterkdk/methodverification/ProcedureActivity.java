@@ -480,12 +480,12 @@ public class ProcedureActivity extends AppCompatActivity
     }
 
     private void updateJSON(Bundle bdData){
-        // 手順JSONの状態を変更
+        // 確認された手順のJSONを変更
         try {
             JSONObject rData = new JSONObject(this.recieveData);
             JSONArray tejun = rData.getJSONArray("tejun");
 
-            // 確認された手順を確認済に変更
+            // 手順の各値を変更(状態以外)
             int currentPos = mProcFragment.getCurrentPos();
             JSONObject targetTejun = (JSONObject) tejun.get(currentPos);
             if (this.diffFlag == 0) {
@@ -495,20 +495,22 @@ public class ProcedureActivity extends AppCompatActivity
                 targetTejun.put("bo_gs", "True");  // 現場差異有りの場合
                 if (this.diffFlag == 1) {
                     targetTejun.put("tx_gs", "スキップ");
-                } else {
+                } else if(this.diffFlag == 2) {
                     targetTejun.put("tx_gs", "追加");
                 }
             }
             tejun.put(currentPos, targetTejun);
 
-            // 現在の手順を進める
-            if (this.diffFlag != 2) {
+            // 手順の状態を変更
+            if (this.diffFlag == 2) {
+                targetTejun.put("cd_status", "1"); // 現場差異"追加"は手順を進めないので確認済にしない
+            } else {
                 targetTejun.put("cd_status", "7"); // 確認済に変更
-                //
+                // コメント行は実行済みとして行を進める
                 int nextPos = currentPos + 1;
                 JSONObject nextTejun = (JSONObject) tejun.get(nextPos);
                 while(nextTejun.getString("tx_sno").equals("C")){
-                    nextTejun.put("cd_status", "7"); // コメントは実行済みにする
+                    nextTejun.put("cd_status", "7");
                     tejun.put(nextPos, nextTejun);
                     nextPos++;
                     nextTejun = (JSONObject) tejun.get(nextPos);
@@ -521,7 +523,7 @@ public class ProcedureActivity extends AppCompatActivity
             JSONObject t_sno = rData.getJSONObject("t_sno");
             t_sno.put("cd_status","0");
 
-            this.recieveData = rData.toString() + "$";  // "$"はこのタイミングでないと、本画面に戻ってきた時に増えてしまう
+            this.recieveData = rData.toString() + "$";  // 末尾の"$"はこのタイミングで追加しないと、2回目に戻った時エラー
 
         } catch (JSONException e) {
             e.printStackTrace();
