@@ -206,16 +206,14 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             } else if(reM.find()) {
                 // 時刻フォーマットの時(再表示)
                 rc = reM.group(2) + ":" + reM.group(3);
-            } else {
+            }else{
                 rc = remark;
             }
-
             if(tx_gs.equals("追加") && ! rc.equals("")){
                 rc = tx_gs + "\r\n" + rc;
-            } else {
+            }else{
                 rc = tx_gs + rc;
             }
-
             return rc;
         }
         public void onBindItemViewHolder(final ProcItem data) {

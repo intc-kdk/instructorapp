@@ -488,7 +488,6 @@ public class ProcedureActivity extends AppCompatActivity
             // 確認された手順を確認済に変更
             int currentPos = mProcFragment.getCurrentPos();
             JSONObject targetTejun = (JSONObject) tejun.get(currentPos);
-            targetTejun.put("cd_status", "7"); // 確認済に変更
             if (this.diffFlag == 0) {
                 String tsB = bdData.getString("ts_b");  // 現場差異無しの場合
                 targetTejun.put("ts_b", tsB);
@@ -503,16 +502,19 @@ public class ProcedureActivity extends AppCompatActivity
             tejun.put(currentPos, targetTejun);
 
             // 現在の手順を進める
-            int nextPos = currentPos + 1;
-            JSONObject nextTejun = (JSONObject) tejun.get(nextPos);
-            while(nextTejun.getString("tx_sno").equals("C")){
-                nextTejun.put("cd_status", "7"); // コメントは実行済みにする
+            if (this.diffFlag != 2) {
+                targetTejun.put("cd_status", "7"); // 確認済に変更
+                //
+                int nextPos = currentPos + 1;
+                JSONObject nextTejun = (JSONObject) tejun.get(nextPos);
+                while(nextTejun.getString("tx_sno").equals("C")){
+                    nextTejun.put("cd_status", "7"); // コメントは実行済みにする
+                    tejun.put(nextPos, nextTejun);
+                    nextPos++;
+                    nextTejun = (JSONObject) tejun.get(nextPos);
+                }
                 tejun.put(nextPos, nextTejun);
-                nextPos++;
-                nextTejun = (JSONObject) tejun.get(nextPos);
             }
-            tejun.put(nextPos, nextTejun);
-
             rData.put("tejun", tejun);
 
             // 画面全体の着色を戻す
