@@ -139,7 +139,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         private void setItemColor(ProcItem data){
             Resources res = this.mView.getResources();
 
-            // 初期設定
+            // 初期設定(指示前)
             int bgColor = res.getColor(R.color.colorBgTransparent);             // 現在の手順行の背景色
             int bgNumberColor = res.getColor(R.color.colorBgTransparent);       // 手順番号欄の背景色(透過)
             int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名欄の背景色(濃水色)

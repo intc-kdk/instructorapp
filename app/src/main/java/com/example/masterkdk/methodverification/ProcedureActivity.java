@@ -202,6 +202,7 @@ public class ProcedureActivity extends AppCompatActivity
                 String commandString = commandBasic + diffFlag +"\"}";
                 String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
+                updateButtonLock = false;
             }
         });
         popupView.findViewById(R.id.procedure_add_button).setOnClickListener(new View.OnClickListener() {
@@ -220,6 +221,7 @@ public class ProcedureActivity extends AppCompatActivity
                 String commandString = commandBasic + diffFlag +"\"}";
                 String data = dsHelper.makeSendData("14", commandString);
                 sendFragment.send(data);
+                updateButtonLock = false;
             }
         });
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
@@ -312,6 +314,7 @@ public class ProcedureActivity extends AppCompatActivity
         sendFragment.send(data);
 
         this.buttonLock = true;
+        this.updateButtonLock = false;
         this.setOrderStatus = 1;
     }
 
@@ -374,7 +377,7 @@ public class ProcedureActivity extends AppCompatActivity
             mData = dsHelper.makeSendData("50", "");
 
         } else if(cmd.equals("56")) { // 確認者タブレットが現場差異を確認した
-//            if(this.diffFlag != 0) {  // 現場差異の発令がなければ処理させない=>キャンセル後に確認を受信する可能性がある
+//            if(this.diffFlag != 0) {  // 現場差異の発令がなければ処理させない => キャンセル後に確認を受信する可能性がある
                 updateJSON(dsHelper.getRecievedData());  // 手順JSONの状態を変更
 //            }
             mData = dsHelper.makeSendData("50", "");
@@ -458,7 +461,8 @@ public class ProcedureActivity extends AppCompatActivity
                 }
 
                 diffFlag = 0;
-                mPopupWindow.dismiss();  // ポップアップを閉じる
+                updateButtonLock = true;  // フラグを使わずに現場差異確認を再送信させない為、画面更新ボタンを一旦無効化
+                mPopupWindow.dismiss();    // ポップアップを閉じる
                 recieveFragment.listen();  // サーバーからの指示を待機
 //            }
 
