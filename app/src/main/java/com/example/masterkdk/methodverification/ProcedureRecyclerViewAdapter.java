@@ -140,56 +140,57 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             Resources res = this.mView.getResources();
 
             // 初期設定
-            int bgColor = res.getColor(R.color.colorBgTransparent);
-            int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色（水色）
-            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色（濃水色）
-            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色（黒）
-            int bgWrapPlace = res.getColor(R.color.colorBgTransparent);             // 盤名のラップフレームの色（透過）
-            int bgWrapOperation = res.getColor(R.color.colorBgTransparent);         // 操作ボタンのラップフレームの色（透過）
-            int bgNumberColor = res.getColor(R.color.colorBgTransparent);  // 手順番号欄の背景色
-            int bgRemarksColor = res.getColor(R.color.colorBgTransparent); // 確認時刻欄の背景色
+            int bgColor = res.getColor(R.color.colorBgTransparent);             // 現在の手順行の背景色
+            int bgNumberColor = res.getColor(R.color.colorBgTransparent);       // 手順番号欄の背景色(透過)
+            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名欄の背景色(濃水色)
+            int btnColor = res.getColor(R.color.colorInstructButton);           // 指示ボタンの背景色(水色)
+            int txtColor= res.getColor(R.color.colorTextBlack);                  // 指示ボタン文言の背景色(黒)
+            int bgRemarksColor = res.getColor(R.color.colorBgTransparent);      // 確認時刻欄の背景色
 
-            if(data.cd_status.equals("1")){   // 実行中の時
+            if(data.cd_status.equals("1")) {  // 現在の手順行の背景色
                 bgColor = res.getColor(R.color.colorYellowButton);
             }
-            if(data.bo_gs.equals("True")){
+            if(data.bo_gs.equals("True")) {  // 手順番号欄の背景色
                 bgNumberColor= res.getColor(R.color.colorGrayButton);
-                bgRemarksColor= res.getColor(R.color.colorGrayButton);
             }
-            if(data.cd_status.equals("1")) {  // 指示
-
-                if(data.bo_gs.equals("True")){
-                    // 盤情報周り（黄）
-                    bgWrapPlace= res.getColor(R.color.colorYellowButton);
-                    bgWrapOperation= res.getColor(R.color.colorYellowButton);
-                }
-            }else if(data.cd_status.equals("7")){  //完了
-                // 盤情報周り（緑）
-                bgWrapPlace= res.getColor(R.color.colorBgTransparent);
-                bgWrapOperation= res.getColor(R.color.colorBgTransparent);
-
-                if(data.bo_gs.equals("True")){
+            if(data.cd_status.equals("7")) {  // 盤名欄の背景色
+                if(data.bo_gs.equals("False")) {
+                    bgPlaceColor = res.getColor(R.color.colorBoardEquipmentDoneText);
+                } else if(data.bo_gs.equals("True")){
                     bgPlaceColor = res.getColor(R.color.colorGrayButton);
-                    txtColor = res.getColor(R.color.colorText);
+                }
+            }
+            if(data.cd_status.equals("7")) {  // 指示ボタンの背景色
+                if(data.bo_gs.equals("False")) {
+                    btnColor = getColorInt(data.tx_clr2);
+                } else if(data.bo_gs.equals("True")) {
                     if(data.tx_gs.equals("スキップ")) {
                         btnColor = res.getColor(R.color.colorGrayButton);
-                    }else{
+                    } else if(data.tx_gs.equals("追加")) {
                         btnColor = getColorInt(data.tx_clr2);
                     }
-                }else {
-                    btnColor = getColorInt(data.tx_clr2);
-                    bgPlaceColor = res.getColor(R.color.colorBoardEquipmentDoneText);
-                    txtColor = res.getColor(R.color.colorText);
+                }
+            }
+            if(data.cd_status.equals("7")) {  // 指示ボタン文言の背景色
+                txtColor = res.getColor(R.color.colorText);  // 白
+            }
+            if(data.cd_status.equals("1")) {  // 確認時刻欄の背景色
+                if(data.bo_gs.equals("True")) {
+                    if(data.tx_gs.equals("追加")) {
+                        bgRemarksColor = res.getColor(R.color.colorGrayButton);
+                    }
+                }
+            } else if(data.cd_status.equals("7")) {
+                if(data.bo_gs.equals("True")) {
+                    bgRemarksColor = res.getColor(R.color.colorGrayButton);
                 }
             }
 
             this.mView.setBackgroundColor(bgColor);
+            this.mNumberView.setBackgroundColor(bgNumberColor);
             this.mPlaceView.setBackgroundColor(bgPlaceColor);
             this.mOperationView.setBackgroundColor(btnColor);
             this.mOperationView.setTextColor(txtColor);
-            this.mWrapPlace.setBackgroundColor(bgWrapPlace);
-            this.mWrapOperation.setBackgroundColor(bgWrapOperation);
-            this.mNumberView.setBackgroundColor(bgNumberColor);
             this.mRemarksView.setBackgroundColor(bgRemarksColor);
         }
         private String getRemarks(String tx_gs, String remark){
