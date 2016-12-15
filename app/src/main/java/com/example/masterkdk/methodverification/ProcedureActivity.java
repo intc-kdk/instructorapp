@@ -103,6 +103,23 @@ public class ProcedureActivity extends AppCompatActivity
         this.recieveCommand = resultArr[0];
         this.recieveData = resultArr[1];
 
+        // 確認待機中の場合、確認を受信できるようにフラグを変更　2016/12/15
+        int cpos = mProcFragment.getCurrentPos();
+        String scpos = String.valueOf(cpos);
+        try {
+            JSONObject jsonObj = new JSONObject(resultArr[1]);
+//          JSONObject ja = jsonObj.getJSONObject("tejun");
+            JSONArray js = jsonObj.getJSONArray("tejun");
+            JSONObject target =(JSONObject)js.get(cpos);
+            String cds = target.getString("cd_status");
+
+            if ( cds.equals("1")) {
+                setOrderStatus = 1;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         // 現場差異の確認待機時はポップアップ再現
         String cdGsmodeTemp = "";
         try {
