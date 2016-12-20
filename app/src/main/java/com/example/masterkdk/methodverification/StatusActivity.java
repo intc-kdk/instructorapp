@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -30,7 +31,9 @@ public class StatusActivity extends AppCompatActivity
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
 
+    private Button updateButton;
     private String nextActivity = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,9 +52,11 @@ public class StatusActivity extends AppCompatActivity
         fragmentManager.executePendingTransactions();  // 即時実行
         recieveFragment.listen();  // サーバーからの指示を待機
 
-        // ボタンへリスナを登録
+        // ボタン設定
+        updateButton = (Button) findViewById(R.id.update_button);
+        updateButton.setVisibility(View.INVISIBLE);
+        updateButton.setOnClickListener(this);
         findViewById(R.id.menu_button).setOnClickListener(this);
-        findViewById(R.id.update_button).setOnClickListener(this);
         findViewById(R.id.start_button).setOnClickListener(this);
 
         Intent intnt = getIntent();
@@ -221,6 +226,8 @@ public class StatusActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
+        updateButton.setVisibility(View.INVISIBLE);
+
         if(cmd.equals("57")) { // 盤タブレット更新後の描画
             System.out.println("57受信");
             // 設置状況テーブルの更新
@@ -260,10 +267,12 @@ public class StatusActivity extends AppCompatActivity
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            updateButton.setVisibility(View.VISIBLE);
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         } else if (cmd.equals("92")) {  // タイムアウト
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            updateButton.setVisibility(View.VISIBLE);
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         } else if(cmd.equals("99")) { // accept キャンセル
