@@ -48,6 +48,8 @@ public class ProcedureActivity extends AppCompatActivity
     private String recieveCommand;
     private String recieveData;
 
+    private Button procedureUpdateButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,10 +97,12 @@ public class ProcedureActivity extends AppCompatActivity
             wrapProcedure.setBackgroundColor(instructDisplayColor);
         }
 
-        // ボタン(固定)へリスナを登録
+        // 固定のボタンの設定
+        procedureUpdateButton = (Button) findViewById(R.id.procedure_update_button);
+        procedureUpdateButton.setVisibility(View.INVISIBLE);
+        procedureUpdateButton.setOnClickListener(this);
         findViewById(R.id.return_button).setOnClickListener(this);
         findViewById(R.id.site_difference_button).setOnClickListener(this);
-        findViewById(R.id.procedure_update_button).setOnClickListener(this);
 
         this.recieveCommand = resultArr[0];
         this.recieveData = resultArr[1];
@@ -108,7 +112,6 @@ public class ProcedureActivity extends AppCompatActivity
         String scpos = String.valueOf(cpos);
         try {
             JSONObject jsonObj = new JSONObject(resultArr[1]);
-//          JSONObject ja = jsonObj.getJSONObject("tejun");
             JSONArray js = jsonObj.getJSONArray("tejun");
             JSONObject target =(JSONObject)js.get(cpos);
             String cds = target.getString("cd_status");
@@ -418,6 +421,8 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
+        procedureUpdateButton.setVisibility(View.INVISIBLE);
+
         if(cmd.equals("55")) {
             if(this.setOrderStatus == 1){
                 // 確認者タブレットで確認後の描画処理
@@ -485,10 +490,12 @@ public class ProcedureActivity extends AppCompatActivity
 
         } else if (cmd.equals("91")) {  // 受信エラー処理
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            procedureUpdateButton.setVisibility(View.VISIBLE);
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         } else if (cmd.equals("92")) {  // タイムアウト
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            procedureUpdateButton.setVisibility(View.VISIBLE);
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         } else if(cmd.equals("99")) { // accept キャンセル
