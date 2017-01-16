@@ -456,11 +456,15 @@ public class ProcedureActivity extends AppCompatActivity
 
         } else if(cmd.equals("56")) { // 確認者タブレットで現場差異確認後の描画処理
 //            if(this.diffFlag != 0) {
-                // 確認待機中の場合もあるので元の背景色に戻す
-                Resources resources = getResources();
-                int instructDisplayColor = resources.getColor(R.color.colorBackGround);
-                View wrapProcedure = findViewById(R.id.WrapProcedure);
-                wrapProcedure.setBackgroundColor(instructDisplayColor);
+            // スキップかつ確認待機中の場合のみ、背景色を戻す
+                if (setOrderStatus == 1) {
+                    if (diffFlag == 1) {
+                        Resources resources = getResources();
+                        int instructDisplayColor = resources.getColor(R.color.colorBackGround);
+                        View wrapProcedure = findViewById(R.id.WrapProcedure);
+                        wrapProcedure.setBackgroundColor(instructDisplayColor);
+                    }
+                }
 
                 int position = mProcFragment.getCurrentPos();
                 String tx_gs = "";
