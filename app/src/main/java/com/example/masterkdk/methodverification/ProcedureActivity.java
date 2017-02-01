@@ -237,11 +237,13 @@ public class ProcedureActivity extends AppCompatActivity
                     anotherV.setBackgroundColor(anotherColorNum);
                 }
                 // コマンド送信
-                diffFlag = 2;
-                String commandString = commandBasic + diffFlag +"\"}";
-                String data = dsHelper.makeSendData("14", commandString);
-                sendFragment.send(data);
-                updateButtonLock = false;
+                if (diffFlag != 2) {  // 連打対策
+                    diffFlag = 2;
+                    String commandString = commandBasic + diffFlag + "\"}";
+                    String data = dsHelper.makeSendData("14", commandString);
+                    sendFragment.send(data);
+                    updateButtonLock = false;
+                }
             }
         });
         popupView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
