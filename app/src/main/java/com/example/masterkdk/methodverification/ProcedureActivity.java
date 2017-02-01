@@ -357,6 +357,17 @@ public class ProcedureActivity extends AppCompatActivity
             wrapProcedure.setBackgroundColor(instructDisplayColor);
         }else if(cmd.equals("50")){
             // do nothing
+        }else if(cmd.equals("5R")){
+            // 手順番号不一致時に指示を再送
+            String correct_sno = dsHelper.getRecievedData().getString("in_sno");
+            String reSendData;
+            if (this.diffFlag == 0) {
+                reSendData = dsHelper.makeSendData("13","{\"手順書番号\":\"" + correct_sno + "\"}");
+            } else {
+                reSendData = dsHelper.makeSendData("14","{\"in_sno\":\"" + correct_sno + "\",\"Com\":\"" + this.diffFlag + "\"}");
+            }
+            sendFragment.send(reSendData);
+
         } else if (cmd.equals("91")) {  // 受信エラー処理
             alertDialogUtil.show(this, sendFragment, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
